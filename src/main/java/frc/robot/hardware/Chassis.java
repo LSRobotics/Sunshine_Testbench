@@ -18,10 +18,10 @@ public class Chassis {
     static SpeedCurve curve = SpeedCurve.LINEAR;
 
     static public void initialize() {
-        l1 = new MotorNG(Statics.CHASSIS_L1,Model.FALCON_500);
-        l2 = new MotorNG(Statics.CHASSIS_L2,Model.FALCON_500);
-        r1 = new MotorNG(Statics.CHASSIS_R1,Model.FALCON_500,true);
-        r2 = new MotorNG(Statics.CHASSIS_R2,Model.FALCON_500,true);
+        l1 = new MotorNG(Statics.CHASSIS_L1,Model.TALON_SRX);
+        l2 = new MotorNG(Statics.CHASSIS_L2,Model.TALON_SRX);
+        r1 = new MotorNG(Statics.CHASSIS_R1,Model.TALON_SRX,true);
+        r2 = new MotorNG(Statics.CHASSIS_R2,Model.TALON_SRX,true);
 
         compressor = new Compressor();
 

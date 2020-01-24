@@ -19,18 +19,6 @@ public class Statics {
                             CHASSIS_R1 = 6,
                             CHASSIS_R2 = 7;
 
-
-//Other Motors
-    static final public int SPARK_MAX_1 = 3,
-                            SPARK_MAX_2 = 4,
-                            FALCON      = 2,
-                            FALCON_SHOOTER_UP = 5, //Needs change
-                            FALCON_SHOOTER_DOWN = 6; //Needs change
-
-//Ultrasonic
-    static final public int US_PING = 0,
-                            US_ECHO = 1;
-
 //TODO: UPDATE THIS
     static final public int US_ALIGNER_F_PING  = 2,
                             US_ALIGNER_F_ECHO  = 3,

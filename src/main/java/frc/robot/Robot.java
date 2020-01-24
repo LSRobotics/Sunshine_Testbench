@@ -25,23 +25,9 @@ public class Robot extends TimedRobot {
 
   //Shared (Make sure these are "public" so that Core can take them in, which allows global access to happen)
   public Gamepad gp1,gp2;
-
-  public MotorNG shooterUp,shooterDown;
-
-  public ColorSensorV3 colorSensor;
-  public Ultrasonic us;
-  public Compressor compressor;
-
-  public double motorSpeed = 1.0,
-                shooterSpeed = 1.0;
-  public final double SPD_TWEAK_INTERVAL = 0.2;
-  public boolean isFirstSparkMax = true;
-  public static double driveSpeed = 1.0;
-
   //Private
-  boolean isLowSpeed = false,
-                 isHookPowered = false,
-                 isRollerPowered = false;
+
+  public static double driveSpeed = 1.0;
 
   //Drive mode GUI variables and setup
   public static final String kDefaultDrive = "Default";
@@ -66,19 +52,9 @@ public class Robot extends TimedRobot {
 
     Chassis.initialize();
     gp1 = new Gamepad(0);
-    //gp2 = new Gamepad(1);
+    gp2 = new Gamepad(1);
 
     Camera.initialize();
-
-    compressor = new Compressor();
-
-    shooterUp = new MotorNG(Statics.FALCON_SHOOTER_UP, Model.FALCON_500);
-    shooterDown = new MotorNG(Statics.FALCON_SHOOTER_DOWN, Model.FALCON_500);
-
-    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-
-    us = new Ultrasonic(Statics.US_PING, Statics.US_ECHO, Ultrasonic.Unit.kMillimeters);
-    us.setAutomaticMode(true);
   }
 
   @Override
@@ -175,56 +151,12 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void updateShooters() {
-
-    boolean isSpeedChanged = false;
-
-    //Shooter Speed Ajust (For tweaking)
-
-    if(gp1.isKeyToggled(Key.DPAD_UP)) {
-
-      if(shooterSpeed - SPD_TWEAK_INTERVAL >= 0) {
-        shooterSpeed -= SPD_TWEAK_INTERVAL;
-
-        isSpeedChanged = true;
-      }
-    }
-    else if(gp1.isKeyToggled(Key.DPAD_DOWN)) {
-        if(shooterSpeed + SPD_TWEAK_INTERVAL <= 1) {
-          shooterSpeed += SPD_TWEAK_INTERVAL;
-  
-          isSpeedChanged = true;
-        }   
-    }
-
-    if(isSpeedChanged) {
-      shooterUp.setSpeed(shooterSpeed);
-      shooterDown.setSpeed(shooterSpeed);
-    
-      if(shooterUp.getCurrentPower() > 0) {
-        shooterUp.move(true,false);
-        shooterDown.move(true,false);
-      }
-
-      Utils.report("New Shooter Speed: " + shooterSpeed);
-    }
-
-    //Shooter Actuation
-    if(gp1.isKeyChanged(Key.A)) {
-      shooterUp.move(gp1.isKeyHeld(Key.A),false);
-      shooterDown.move(gp1.isKeyHeld(Key.A),false);
-    }
-  }
 
   public void updateTop() {
-    updateShooters();
+    
   }
   
   public void postData() {
-    SmartDashboard.putNumber("Shooter speed level", shooterSpeed);
-    SmartDashboard.putNumber("Ultrasonic",us.getRangeMM());
-    SmartDashboard.putString("Color Sensor (R,G,B)",colorSensor.getRed() + ", " + colorSensor.getGreen() + ", " + colorSensor.getBlue());
-    SmartDashboard.putNumber("Chassis Speed", driveSpeed);
   }
 
   @Override
