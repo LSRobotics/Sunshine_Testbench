@@ -49,11 +49,11 @@ public class Robot extends TimedRobot {
 
 
     NavX.initialize();
-    NavX.navx.getAngle();
+    NavX.navx.zeroYaw();
 
-    gyroPID = new PIDController(.1, 0, 0); //variables you test
+    gyroPID = new PIDController(.045, .85, .005); //variables you test
     gyroPID.setSetpoint(90);
-    gyroPID.setTolerance(2);
+
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
     //Drive mode GUI setup
@@ -167,10 +167,11 @@ public class Robot extends TimedRobot {
       Chassis.drive(y,-x);
     }
 
+    //rotates robot to Setpoint Angle using PID
     if (gp1.isKeyToggled(Key.A)){
       while(true) {
-      Chassis.setSpeedFactor(0.3);
-      Chassis.drive(0, -gyroPID.calculate(NavX.navx.getAngle()));
+      Chassis.setSpeedFactor(0.15);
+      Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()));
         
       gp1.fetchData();
       postData();
@@ -181,6 +182,11 @@ public class Robot extends TimedRobot {
       }
       Chassis.stop();
       Chassis.setSpeedFactor(1.0);
+    }
+
+    //resets angle to zero
+    if (gp1.isKeyToggled(Key.Y)){
+      NavX.navx.zeroYaw();
     }
   }
 
@@ -197,6 +203,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "Low" : "High"));
+    SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
     SmartDashboard.putString("Color Sensor (R,G,B)",colorSensor.getRed() + ", " + colorSensor.getGreen() + ", " + colorSensor.getBlue());
   }
 
