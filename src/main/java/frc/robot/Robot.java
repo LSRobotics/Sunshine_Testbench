@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     NavX.initialize();
     NavX.navx.getAngle();
 
-    gyroPID = new PIDController(2, 1, 1); //variables you test
+    gyroPID = new PIDController(2, 10, 1); //variables you test
     gyroPID.setSetpoint(90);
 
 
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Both Strick Drive", kCustomDrive2);
     SmartDashboard.putData("Drive choices", m_chooser);
     System.out.println("Drive Selected: " + m_driveSelected);
-    
+
     postData();
 
     Core.initialize(this);
@@ -108,7 +108,7 @@ public class Robot extends TimedRobot {
    public void updateBottom() {
 
     //Gearbox
-    if(gp1.isKeyToggled(Key.Y)) {
+    if(gp1.isKeyToggled(Key.DPAD_UP)) {
       Chassis.shift();
     }
 
@@ -182,8 +182,8 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
-    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
-    SmartDashboard.putNumber("Side Ultrasonic", Chassis.backAligner.getRangeMM());
+   // SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    //SmartDashboard.putNumber("Side Ultrasonic", Chassis.backAligner.getRangeMM());
     SmartDashboard.putNumber("P value: ", gyroPID.getP());
     SmartDashboard.putNumber("I value: ", gyroPID.getI());
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
