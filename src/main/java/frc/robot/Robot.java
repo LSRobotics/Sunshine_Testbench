@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Both Strick Drive", kCustomDrive2);
     SmartDashboard.putData("Drive choices", m_chooser);
     System.out.println("Drive Selected: " + m_driveSelected);
+    
+    postData();
 
     Core.initialize(this);
 
@@ -162,7 +164,15 @@ public class Robot extends TimedRobot {
     }
 
     if (gp1.isKeyToggled(Key.A)){
+      while(true) {
       Chassis.drive(gyroPID.calculate(NavX.navx.getAngle()), -gyroPID.calculate(NavX.navx.getAngle()));
+      
+      postData();
+      if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
+        Chassis.stop();
+        break;
+      }
+      }
     }
   }
 
@@ -173,7 +183,10 @@ public class Robot extends TimedRobot {
   
   public void postData() {
     SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
-    SmartDashboard.putNumber("Back Ultrasonic", Chassis.backAligner.getRangeMM());
+    SmartDashboard.putNumber("Side Ultrasonic", Chassis.backAligner.getRangeMM());
+    SmartDashboard.putNumber("P value: ", gyroPID.getP());
+    SmartDashboard.putNumber("I value: ", gyroPID.getI());
+    SmartDashboard.putNumber("D value: ", gyroPID.getD());
   }
 
   @Override
