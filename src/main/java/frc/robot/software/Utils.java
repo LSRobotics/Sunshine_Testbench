@@ -106,4 +106,5 @@ public class Utils {
     public static boolean isDataClose(double value, double expected, double tolerance) {
         return Math.abs(value - expected) < tolerance || (Math.abs(value - expected)) == tolerance || Math.abs(value - expected) == 0;
     }
+
 }

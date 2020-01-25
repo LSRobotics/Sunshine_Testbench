@@ -11,6 +11,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.Compressor;
@@ -52,7 +53,7 @@ public class Robot extends TimedRobot {
     NavX.navx.zeroYaw();
 
     gyroPID = new PIDController(.045, .85, .005); //variables you test
-    gyroPID.setSetpoint(90);
+    gyroPID.setSetpoint(0);
 
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
@@ -196,15 +197,28 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
-    //SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
-    //SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
+
+    Color color = colorSensor.getColor();
+
+    boolean isBlueLine = Utils.isDataClose(color.red, 0.21, 0.06)
+                         && Utils.isDataClose(color.green, 0.42, 0.06)
+                         && Utils.isDataClose(color.blue, 0.36, 0.06);
+
+    boolean isRedLine = Utils.isDataClose(color.red, 0.47, 0.06)
+                        && Utils.isDataClose(color.green, 0.37, 0.06)
+                        && Utils.isDataClose(color.blue, 0.16, 0.06);
+
+    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
     SmartDashboard.putNumber("P value: ", gyroPID.getP());
     SmartDashboard.putNumber("I value: ", gyroPID.getI());
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
-    SmartDashboard.putString("Color Sensor (R,G,B)",colorSensor.getRed() + ", " + colorSensor.getGreen() + ", " + colorSensor.getBlue());
+    SmartDashboard.putString("Color Sensor (R,G,B)",color.red + ", " + color.green + ", " + color.blue);
+    SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
+    SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
   }
 
   @Override
