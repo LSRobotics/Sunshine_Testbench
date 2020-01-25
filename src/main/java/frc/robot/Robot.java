@@ -15,8 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
+
 //Internal
 import frc.robot.hardware.*;
+import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.MotorNG.Model;
 import frc.robot.software.*;
@@ -40,6 +42,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
+    NavX.initialize();
+
+    NavX.navx.getAngle();
+    
     //Drive mode GUI setup
     m_chooser.setDefaultOption("Default", kDefaultDrive);
     m_chooser.addOption("Right Stick Drive", kCustomDrive);
@@ -157,6 +163,8 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
+    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    SmartDashboard.putNumber("Back Ultrasonic", Chassis.backAligner.getRangeMM());
   }
 
   @Override
