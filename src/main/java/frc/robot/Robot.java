@@ -15,8 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.controller.PIDController;
 //Internal
 import frc.robot.hardware.*;
+import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.MotorNG.Model;
 import frc.robot.software.*;
@@ -37,8 +39,18 @@ public class Robot extends TimedRobot {
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  public PIDController gyroPID;
+
   @Override
   public void robotInit() {
+
+
+    NavX.initialize();
+    NavX.navx.getAngle();
+
+    gyroPID = new PIDController(2, 1, 1); //variables you test
+    gyroPID.setSetpoint(90);
+
 
     //Drive mode GUI setup
     m_chooser.setDefaultOption("Default", kDefaultDrive);
@@ -148,7 +160,10 @@ public class Robot extends TimedRobot {
       }
       Chassis.drive(y,x);
     }
-    
+
+    if (gp1.isKeyToggled(Key.A)){
+      Chassis.drive(gyroPID.calculate(NavX.navx.getAngle()), -gyroPID.calculate(NavX.navx.getAngle()));
+    }
   }
 
 
@@ -157,6 +172,8 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
+    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    SmartDashboard.putNumber("Back Ultrasonic", Chassis.backAligner.getRangeMM());
   }
 
   @Override
