@@ -63,7 +63,7 @@ public class Chassis {
         while(true) {
 
             double front = frontAligner.getRangeMM();
-            double back  = backAligner.getRangeMM();
+            double back  = sideAligner.getRangeMM();
             
             Core.robot.gp1.fetchData();
             
