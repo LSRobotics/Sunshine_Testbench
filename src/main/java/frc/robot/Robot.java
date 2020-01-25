@@ -40,6 +40,8 @@ public class Robot extends TimedRobot {
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+
+  public ColorSensorV3 colorSensor;
   public PIDController gyroPID;
 
   @Override
@@ -51,7 +53,7 @@ public class Robot extends TimedRobot {
 
     gyroPID = new PIDController(2, 10, 1); //variables you test
     gyroPID.setSetpoint(90);
-
+    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
     //Drive mode GUI setup
     m_chooser.setDefaultOption("Default", kDefaultDrive);
@@ -183,13 +185,14 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
-    //SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
-    //SmartDashboard.putNumber("Side Ultrasonic", Chassis.backAligner.getRangeMM());
+    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
     SmartDashboard.putNumber("P value: ", gyroPID.getP());
     SmartDashboard.putNumber("I value: ", gyroPID.getI());
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "High" : "Low"));
+    SmartDashboard.putString("Color Sensor (R,G,B)",colorSensor.getRed() + ", " + colorSensor.getGreen() + ", " + colorSensor.getBlue());
   }
 
   @Override

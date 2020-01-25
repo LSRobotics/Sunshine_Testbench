@@ -20,10 +20,10 @@ public class Statics {
                             CHASSIS_R2 = 5;
 
 //TODO: UPDATE THIS
-    static final public int US_ALIGNER_F_PING  = 2,
-                            US_ALIGNER_F_ECHO  = 3,
-                            US_ALIGNER_B_PING  = 4,
-                            US_ALIGNER_B_ECHO  = 5;
+    static final public int US_ALIGNER_F_PING  = 6,
+                            US_ALIGNER_F_ECHO  = 7,
+                            US_ALIGNER_S_PING  = 8,
+                            US_ALIGNER_S_ECHO  = 9;
 
 //Shifting Gearbox
     static final public int SHIFTER_PCM = 0,

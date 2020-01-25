@@ -13,7 +13,7 @@ public class Chassis {
     static double speedFactor = 1;
     static Compressor compressor;
     public static Solenoid shifter;
-    public static Ultrasonic frontAligner, backAligner;
+    public static Ultrasonic frontAligner, sideAligner;
 
     static SpeedCurve curve = SpeedCurve.LINEAR;
 
@@ -30,7 +30,7 @@ public class Chassis {
                                Statics.SHIFTER_R);
 
         frontAligner = new Ultrasonic(Statics.US_ALIGNER_F_PING,Statics.US_ALIGNER_F_ECHO,Unit.kMillimeters);
-        backAligner = new Ultrasonic(Statics.US_ALIGNER_B_PING,Statics.US_ALIGNER_B_ECHO,Unit.kMillimeters);
+        sideAligner = new Ultrasonic(Statics.US_ALIGNER_S_PING,Statics.US_ALIGNER_S_ECHO,Unit.kMillimeters);
     }
 
     static public void shift() {
@@ -63,7 +63,7 @@ public class Chassis {
         while(true) {
 
             double front = frontAligner.getRangeMM();
-            double back  = frontAligner.getRangeMM();
+            double back  = backAligner.getRangeMM();
             
             Core.robot.gp1.fetchData();
             
