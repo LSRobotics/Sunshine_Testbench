@@ -21,6 +21,7 @@ public class Solenoid {
     }
 
     public Solenoid(int deviceId, int fPort, int rPort) {
+        
         compressor = new Compressor();
         solenoid = new DoubleSolenoid(deviceId, fPort, rPort);
         solenoid.set(DoubleSolenoid.Value.kOff);

@@ -51,8 +51,9 @@ public class Robot extends TimedRobot {
     NavX.initialize();
     NavX.navx.getAngle();
 
-    gyroPID = new PIDController(2, 10, 1); //variables you test
+    gyroPID = new PIDController(.1, 0, 0); //variables you test
     gyroPID.setSetpoint(90);
+    gyroPID.setTolerance(2);
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
     //Drive mode GUI setup
@@ -163,19 +164,23 @@ public class Robot extends TimedRobot {
           break;
 
       }
-      Chassis.drive(y,x);
+      Chassis.drive(y,-x);
     }
 
     if (gp1.isKeyToggled(Key.A)){
       while(true) {
-      Chassis.drive(gyroPID.calculate(NavX.navx.getAngle()), -gyroPID.calculate(NavX.navx.getAngle()));
-      
+      Chassis.setSpeedFactor(0.3);
+      Chassis.drive(0, -gyroPID.calculate(NavX.navx.getAngle()));
+        
+      gp1.fetchData();
       postData();
-      if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
-        Chassis.stop();
+      if(gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
         break;
       }
+      
       }
+      Chassis.stop();
+      Chassis.setSpeedFactor(1.0);
     }
   }
 
@@ -185,13 +190,13 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
-    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
-    SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
+    //SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    //SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
     SmartDashboard.putNumber("P value: ", gyroPID.getP());
     SmartDashboard.putNumber("I value: ", gyroPID.getI());
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
-    SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "High" : "Low"));
+    SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "Low" : "High"));
     SmartDashboard.putString("Color Sensor (R,G,B)",colorSensor.getRed() + ", " + colorSensor.getGreen() + ", " + colorSensor.getBlue());
   }
 
