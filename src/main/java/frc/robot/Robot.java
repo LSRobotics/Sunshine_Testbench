@@ -36,7 +36,6 @@ public class Robot extends TimedRobot {
   public static final String kCustomDrive = "Right Stick Drive";
   public static final String kCustomDrive1 = "Left Stick Drive";
   public static final String kCustomDrive2 = "Both Stick Drive";
-  public PIDController gyroPID;
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -62,7 +61,6 @@ public class Robot extends TimedRobot {
     System.out.println("Drive Selected: " + m_driveSelected);
 
     Core.initialize(this);
-    gyroPID = new PIDController(Kp, Ki, Kd);
 
     Chassis.initialize();
     gp1 = new Gamepad(0);
