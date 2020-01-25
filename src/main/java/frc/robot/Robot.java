@@ -112,8 +112,7 @@ public class Robot extends TimedRobot {
         Chassis.setSpeedFactor(driveSpeed);
       }
     }
-
-
+    
     // Assistive Autonomous
     if (gp1.isKeyToggled(Key.DPAD_LEFT)) {
       AutoPilot.turnRobotByTime(true);
@@ -149,6 +148,7 @@ public class Robot extends TimedRobot {
       }
       Chassis.drive(y,x);
     }
+    
   }
 
 

@@ -15,9 +15,9 @@ public class Statics {
 //Chassis
 
    static final public int CHASSIS_L1 = 4,
-                            CHASSIS_L2 = 5,
-                            CHASSIS_R1 = 6,
-                            CHASSIS_R2 = 7;
+                            CHASSIS_L2 = 3,
+                            CHASSIS_R1 = 2,
+                            CHASSIS_R2 = 5;
 
 //TODO: UPDATE THIS
     static final public int US_ALIGNER_F_PING  = 2,
