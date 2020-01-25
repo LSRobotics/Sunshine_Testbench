@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
-
+import edu.wpi.first.wpilibj.controller.PIDController;
 //Internal
 import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
@@ -36,16 +36,23 @@ public class Robot extends TimedRobot {
   public static final String kCustomDrive = "Right Stick Drive";
   public static final String kCustomDrive1 = "Left Stick Drive";
   public static final String kCustomDrive2 = "Both Stick Drive";
+  public PIDController gyroPID;
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  public PIDController gyroPID;
 
   @Override
   public void robotInit() {
 
-    NavX.initialize();
 
+    NavX.initialize();
     NavX.navx.getAngle();
-    
+
+    gyroPID = new PIDController(2, 1, 1); //variables you test
+    gyroPID.setSetpoint(90);
+
+
     //Drive mode GUI setup
     m_chooser.setDefaultOption("Default", kDefaultDrive);
     m_chooser.addOption("Right Stick Drive", kCustomDrive);
@@ -55,6 +62,7 @@ public class Robot extends TimedRobot {
     System.out.println("Drive Selected: " + m_driveSelected);
 
     Core.initialize(this);
+    gyroPID = new PIDController(Kp, Ki, Kd);
 
     Chassis.initialize();
     gp1 = new Gamepad(0);
@@ -154,6 +162,10 @@ public class Robot extends TimedRobot {
 
       }
       Chassis.drive(y,x);
+    }
+
+    if (gp1.isKeyToggled(Key.A)){
+      Chassis.drive(gyroPID.calculate(NavX.navx.getAngle()), -gyroPID.calculate(NavX.navx.getAngle()));
     }
   }
 
