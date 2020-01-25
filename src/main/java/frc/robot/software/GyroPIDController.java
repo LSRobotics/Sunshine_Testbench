@@ -9,7 +9,7 @@ public class GyroPIDController extends PIDController {
     }
 
     public void calculate() {
-        super.calculate();
+       // super.calculate();
     }
 
 }
