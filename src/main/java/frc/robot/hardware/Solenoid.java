@@ -14,7 +14,7 @@ public class Solenoid {
 
     private Compressor compressor;
     private DoubleSolenoid solenoid;
-    private Status status = Status.DISABLED;
+    public Status status = Status.DISABLED;
 
     public Solenoid(int fPort, int rPort) {
         this(0,fPort,rPort);

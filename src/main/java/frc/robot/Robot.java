@@ -21,6 +21,7 @@ import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.MotorNG.Model;
+import frc.robot.hardware.Solenoid.Status;
 import frc.robot.software.*;
 
 public class Robot extends TimedRobot {
@@ -182,11 +183,13 @@ public class Robot extends TimedRobot {
   }
   
   public void postData() {
-   // SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
+    //SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
     //SmartDashboard.putNumber("Side Ultrasonic", Chassis.backAligner.getRangeMM());
     SmartDashboard.putNumber("P value: ", gyroPID.getP());
     SmartDashboard.putNumber("I value: ", gyroPID.getI());
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
+    SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
+    SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "High" : "Low"));
   }
 
   @Override

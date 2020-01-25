@@ -12,7 +12,7 @@ public class Chassis {
     static MotorNG l1,l2,r1,r2;
     static double speedFactor = 1;
     static Compressor compressor;
-    static Solenoid shifter;
+    public static Solenoid shifter;
     public static Ultrasonic frontAligner, backAligner;
 
     static SpeedCurve curve = SpeedCurve.LINEAR;
