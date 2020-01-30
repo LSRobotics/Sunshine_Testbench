@@ -20,6 +20,10 @@ public class Chassis {
     static SpeedCurve curve = SpeedCurve.LINEAR;
 
     static public void initialize() {
+
+        frontAligner.setAutomaticMode(true);
+        sideAligner.setAutomaticMode(true);
+
         l1 = new MotorNG(Statics.CHASSIS_L1,Model.TALON_SRX);
         l2 = new MotorNG(Statics.CHASSIS_L2,Model.TALON_SRX);
         r1 = new MotorNG(Statics.CHASSIS_R1,Model.TALON_SRX,true);
