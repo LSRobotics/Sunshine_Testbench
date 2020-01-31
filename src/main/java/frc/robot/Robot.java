@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    updateColorSensor();
     postData();
   }
 
@@ -227,9 +228,6 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
     SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
-    SmartDashboard.putNumber("P value: ", gyroPID.getP());
-    SmartDashboard.putNumber("I value: ", gyroPID.getI());
-    SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
