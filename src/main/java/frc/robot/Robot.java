@@ -27,37 +27,38 @@ import frc.robot.software.*;
 
 public class Robot extends TimedRobot {
 
-  //Shared (Make sure these are "public" so that Core can take them in, which allows global access to happen)
-  public Gamepad gp1,gp2;
-  //Private
+  // Shared (Make sure these are "public" so that Core can take them in, which
+  // allows global access to happen)
+  public Gamepad gp1, gp2;
+  // Private
 
   public static double driveSpeed = 1.0;
 
-  //Drive mode GUI variables and setup
+  // Drive mode GUI variables and setup
   public static final String kDefaultDrive = "Default";
   public static final String kCustomDrive = "Right Stick Drive";
   public static final String kCustomDrive1 = "Left Stick Drive";
   public static final String kCustomDrive2 = "Both Stick Drive";
+  
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  public static boolean isBlueLine, isRedLine;
 
+  public RGBSensor colorSensor = new RGBSensor();
+  public double[] color = {};
 
-  public ColorSensorV3 colorSensor;
   public PIDController gyroPID;
 
   @Override
   public void robotInit() {
 
-
     NavX.initialize();
     NavX.navx.zeroYaw();
 
-    gyroPID = new PIDController(.045, .85, .005); //variables you test
+    gyroPID = new PIDController(.045, .85, .005); // variables you test
     gyroPID.setSetpoint(0);
 
-    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-
-    //Drive mode GUI setup
+    // Drive mode GUI setup
     m_chooser.setDefaultOption("Default", kDefaultDrive);
     m_chooser.addOption("Right Stick Drive", kCustomDrive);
     m_chooser.addOption("Left Strick Drive", kCustomDrive1);
@@ -65,15 +66,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Drive choices", m_chooser);
     System.out.println("Drive Selected: " + m_driveSelected);
 
-    postData();
-
     Core.initialize(this);
 
     Chassis.initialize();
+
     gp1 = new Gamepad(0);
     gp2 = new Gamepad(1);
 
     Camera.initialize();
+
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    postData();
   }
 
   @Override
@@ -92,14 +98,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    //TODO: ACTUALLY DO SOME KIND OF AUTON
+    // TODO: ACTUALLY DO SOME KIND OF AUTON
     teleopPeriodic();
   }
 
-
   @Override
   public void teleopPeriodic() {
-    
+
     gp1.fetchData();
 
     updateBottom();
@@ -109,104 +114,115 @@ public class Robot extends TimedRobot {
 
   }
 
-   //All code for driving
-   public void updateBottom() {
+  // All code for driving
+  public void updateBottom() {
 
-    //Gearbox
-    if(gp1.isKeyToggled(Key.DPAD_UP)) {
+    // Gearbox
+    if (gp1.isKeyToggled(Key.DPAD_UP)) {
       Chassis.shift();
     }
 
-    //raise drive speed
-    if(gp1.isKeyToggled(Key.RB)) {
-      if(driveSpeed + 0.25 <= 1.0) {
+    // raise drive speed
+    if (gp1.isKeyToggled(Key.RB)) {
+      if (driveSpeed + 0.25 <= 1.0) {
         driveSpeed += 0.25;
         Chassis.setSpeedFactor(driveSpeed);
       }
     }
-    //lower drive speed
-    else if(gp1.isKeyToggled(Key.LB)) {
-      if(driveSpeed - 0.25 >= 0) {
+    // lower drive speed
+    else if (gp1.isKeyToggled(Key.LB)) {
+      if (driveSpeed - 0.25 >= 0) {
         driveSpeed -= 0.25;
         Chassis.setSpeedFactor(driveSpeed);
       }
     }
-    
+
     // Assistive Autonomous
     if (gp1.isKeyToggled(Key.DPAD_LEFT)) {
       AutoPilot.turnRobotByTime(true);
-    } 
-    else if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
+    } else if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
       AutoPilot.turnRobotByTime(false);
     }
-    // Drive control 
+    // Drive control
     else {
-      double x = 0,y = 0;
-      switch(m_driveSelected){
-        //Right Stick Drive
-        case kCustomDrive:
-           y = Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_Y));
-           x = Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_X));
-          break;
-        //Left Stick Drive
-        case kCustomDrive1:
-           y = Utils.mapAnalog(gp1.getValue(Key.J_LEFT_Y));
-           x = Utils.mapAnalog(gp1.getValue(Key.J_LEFT_X));
-          break;
-        //Both Stick Drive
-        case kCustomDrive2:
-           y = Utils.mapAnalog(gp1.getValue(Key.J_LEFT_Y));
-           x = Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_X));
-          break;
-        //Default is right stick drive
-        case kDefaultDrive:
-          y = Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_Y));
-          x = Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_X));
-          break;
+      Gamepad.Key yKey = Key.J_RIGHT_Y;
+      Gamepad.Key xKey = Key.J_RIGHT_X;
+
+      switch (m_driveSelected) {
+      // Right Stick Drive
+      case kCustomDrive:
+        yKey = Key.J_RIGHT_Y;
+        xKey = Key.J_RIGHT_X;
+        break;
+      // Left Stick Drive
+      case kCustomDrive1:
+        yKey = Key.J_LEFT_Y;
+        xKey = Key.J_LEFT_X;
+        break;
+      // Both Stick Drive
+      case kCustomDrive2:
+        yKey = Key.J_LEFT_Y;
+        xKey = Key.J_RIGHT_X;
+        break;
+      // Default is right stick drive
+      case kDefaultDrive:
+        yKey = Key.J_RIGHT_Y;
+        xKey = Key.J_RIGHT_X;
+        break;
 
       }
-      Chassis.drive(y,-x);
+      Chassis.drive(Utils.mapAnalog(gp1.getValue(yKey)), -gp1.getValue(xKey));
     }
 
-    //rotates robot to Setpoint Angle using PID
-    if (gp1.isKeyToggled(Key.A)){
-      while(true) {
-      Chassis.setSpeedFactor(0.15);
-      Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()));
-        
-      gp1.fetchData();
-      postData();
-      if(gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
-        break;
-      }
-      
+    // rotates robot to Setpoint Angle using PID
+    if (gp1.isKeyToggled(Key.A)) {
+      while (true) {
+        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
+
+        gp1.fetchData();
+        postData();
+        if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
+          break;
+        }
+
       }
       Chassis.stop();
-      Chassis.setSpeedFactor(1.0);
+    }
+    // Line Drive (Drive forward until a red/blue tape line is detected)
+    else if (gp1.isKeyToggled(Key.B)) {
+      if (!isBlueLine && !isRedLine) {
+        Chassis.driveRaw(0.3, 0);
+        while (true) {
+
+          updateColorSensor();
+
+          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
+            break;
+          }
+
+        }
+        Chassis.stop();
+      }
     }
 
-    //resets angle to zero
-    if (gp1.isKeyToggled(Key.Y)){
+    // resets angle to zero
+    if (gp1.isKeyToggled(Key.Y)) {
       NavX.navx.zeroYaw();
     }
   }
 
+  public void updateColorSensor() {
+    color = colorSensor.getColor();
+
+    isBlueLine = Utils.isColorMatch(color, Statics.TAPE_BLUE, 0.06);
+    isRedLine = Utils.isColorMatch(color, Statics.TAPE_RED, 0.06);
+  }
 
   public void updateTop() {
-    
+    updateColorSensor();
   }
-  
+
   public void postData() {
-
-    Color color = colorSensor.getColor();
-
-    boolean isBlueLine = Utils.isDataClose(color.red, 0.21, 0.06)
-                         && Utils.isDataClose(color.green, 0.42, 0.06)
-                         && Utils.isDataClose(color.blue, 0.36, 0.06);
-
-    boolean isRedLine = Utils.isDataClose(color.red, 0.47, 0.06)
-                        && Utils.isDataClose(color.green, 0.37, 0.06)
-                        && Utils.isDataClose(color.blue, 0.16, 0.06);
 
     SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
     SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
@@ -214,9 +230,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("I value: ", gyroPID.getI());
     SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
-    SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD? "Low" : "High"));
+    SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
-    SmartDashboard.putString("Color Sensor (R,G,B)",color.red + ", " + color.green + ", " + color.blue);
+    SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);
     SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
     SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
   }
