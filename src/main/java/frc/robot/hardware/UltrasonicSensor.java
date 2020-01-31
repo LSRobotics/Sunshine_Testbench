@@ -8,6 +8,9 @@ public class UltrasonicSensor {
 
     public UltrasonicSensor(int ping, int echo) {
         sensor = new Ultrasonic(ping,echo,Ultrasonic.Unit.kMillimeters);
+    }
+
+    public void initialize() {
         sensor.setAutomaticMode(true);
     }
 

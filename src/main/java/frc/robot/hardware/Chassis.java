@@ -19,6 +19,9 @@ public class Chassis {
 
     static public void initialize() {
 
+
+        frontAligner.initialize();
+        sideAligner.initialize();
         shifter = new Solenoid(Statics.SHIFTER_PCM, Statics.SHIFTER_F, Statics.SHIFTER_R);
 
         l1 = new MotorNG(Statics.CHASSIS_L1, Model.TALON_SRX);
