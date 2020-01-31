@@ -194,6 +194,7 @@ public class Robot extends TimedRobot {
         Chassis.driveRaw(0.3, 0);
         while (true) {
 
+          gp1.fetchData();
           updateColorSensor();
 
           if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
