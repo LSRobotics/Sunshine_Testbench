@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   public static double driveSpeed = 1.0;
 
   // Drive mode GUI variables and setup
-  public static final String kDefaultDrive = "Default";
+  public static final String kDefaultDrive = "Default (Right Stick)";
   public static final String kCustomDrive = "Right Stick Drive";
   public static final String kCustomDrive1 = "Left Stick Drive";
   public static final String kCustomDrive2 = "Both Stick Drive";
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
     gyroPID.setSetpoint(0);
 
     // Drive mode GUI setup
-    m_chooser.setDefaultOption("Default", kDefaultDrive);
+    m_chooser.setDefaultOption("Default (Right Stick)", kDefaultDrive);
     m_chooser.addOption("Right Stick Drive", kCustomDrive);
     m_chooser.addOption("Left Strick Drive", kCustomDrive1);
     m_chooser.addOption("Both Strick Drive", kCustomDrive2);
