@@ -210,6 +210,40 @@ public class Robot extends TimedRobot {
     if (gp1.isKeyToggled(Key.Y)) {
       NavX.navx.zeroYaw();
     }
+
+    // full integration of sensors for shot line-up
+    if (gp1.isKeyToggled(Key.X)) {
+      double targetAngle = 0;
+      double xTarget = 0;
+      double yTarget = 0;
+
+      if (!isBlueLine && !isRedLine) {
+        Chassis.driveRaw(0.3, 0);
+        while (true) {
+
+          gp1.fetchData();
+          updateColorSensor();
+
+          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
+            break;
+          }
+
+        }
+        Chassis.stop();
+      }
+      //find and set target angle
+      
+      gyroPID.setSetpoint(targetAngle);
+      while (true) {
+        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
+
+        gp1.fetchData();
+        postData();
+        if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
+          break;
+        }
+      }
+    }
   }
 
   public void updateColorSensor() {
@@ -227,9 +261,6 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
     SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
-    SmartDashboard.putNumber("P value: ", gyroPID.getP());
-    SmartDashboard.putNumber("I value: ", gyroPID.getI());
-    SmartDashboard.putNumber("D value: ", gyroPID.getD());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
