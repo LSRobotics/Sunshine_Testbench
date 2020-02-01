@@ -7,12 +7,15 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 //WPILib
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.autonomous.AutonBase;
+import frc.robot.autonomous.AutonGyroTurn;
 //Internal
 import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
@@ -173,18 +176,7 @@ public class Robot extends TimedRobot {
 
     // rotates robot to Setpoint Angle using PID
     if (gp1.isKeyToggled(Key.A)) {
-      while (true) {
-
-        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
-
-        gp1.fetchData();
-        postData();
-        if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
-          break;
-        }
-
-      }
-      Chassis.stop();
+      new AutonGyroTurn(0, gp1, Key.DPAD_DOWN).run();
     }
     // Line Drive (Drive forward until a red/blue tape line is detected)
     else if (gp1.isKeyToggled(Key.B)) {
