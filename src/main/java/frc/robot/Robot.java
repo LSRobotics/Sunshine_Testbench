@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public static boolean isBlueLine, isRedLine;
+  public static boolean isBlueLine, isRedLine, isWhiteLine;
 
   public RGBSensor colorSensor = new RGBSensor();
   public double[] color = {};
@@ -200,7 +200,7 @@ public class Robot extends TimedRobot {
           gp1.fetchData();
           updateColorSensor();
 
-          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
+          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine || isWhiteLine)) {
             break;
           }
 
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
         Chassis.stop();
       }
       //find and set target angle
-      targetAngle = Math.toDegrees(Math.atan2(94.66-14-Chassis.sideAligner.getRangeInches(), 206.57-6));
+      targetAngle = Math.toDegrees(Math.atan2(94.66-(30+Chassis.sideAligner.getRangeInches()), 206.57-6));
       gyroPID.setSetpoint(-targetAngle);
       lastTargetAngle = -targetAngle;
     
@@ -270,6 +270,8 @@ public class Robot extends TimedRobot {
 
     isBlueLine = Utils.isColorMatch(color, Statics.TAPE_BLUE, 0.06);
     isRedLine = Utils.isColorMatch(color, Statics.TAPE_RED, 0.06);
+    isWhiteLine = Utils.isColorMatch(color, Statics.TAPE_WHITE, 0.02);
+    
   }
 
   public void updateTop() {
@@ -286,6 +288,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);
     SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
     SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
+    SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
   }
 
