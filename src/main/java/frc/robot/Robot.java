@@ -17,6 +17,8 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import io.github.pseudoresonance.pixy2api.Pixy2;
+import io.github.pseudoresonance.pixy2api.Pixy2.LinkType;
 //Internal
 import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
@@ -30,9 +32,10 @@ public class Robot extends TimedRobot {
   // Shared (Make sure these are "public" so that Core can take them in, which
   // allows global access to happen)
   public Gamepad gp1, gp2;
-  // Private
 
   public static double driveSpeed = 1.0;
+
+  private final Pixy2 _pixy2 = Pixy2.createInstance(LinkType.SPI);
 
   // Drive mode GUI variables and setup
   public static final String kDefaultDrive = "Default (Right Stick)";
@@ -55,6 +58,8 @@ public class Robot extends TimedRobot {
 
     NavX.initialize();
     NavX.navx.zeroYaw();
+
+    _pixy2.init(0);
 
     gyroPID = new PIDController(.045, .85, .005); // variables you test
     gyroPID.setSetpoint(0);
@@ -86,6 +91,20 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    var wait = false;
+    var signature = 0;
+    var blocksToReturn = 1;
+    var colorTracker = _pixy2.getCCC();
+    var blockCount = colorTracker.getBlocks(wait, signature, blocksToReturn);
+    if (blockCount > 0) //blocks were found for the specified signature
+    {
+      var block = colorTracker.getBlocks().get(0);
+      SmartDashboard.putNumber("Signature ID", block.getSignature());
+      SmartDashboard.putNumber("X", block.getX());
+      SmartDashboard.putNumber("Y", block.getY());
+      SmartDashboard.putNumber("Width", block.getWidth());
+      SmartDashboard.putNumber("Height", block.getHeight());
+    }
   }
 
   @Override
