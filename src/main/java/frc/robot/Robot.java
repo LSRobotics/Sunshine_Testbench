@@ -180,8 +180,7 @@ public class Robot extends TimedRobot {
     if (gp1.isKeyToggled(Key.A)) {
       while (true) {
 
-        Chassis.setSpeedFactor(0.15);
-        Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()));
+        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
 
         gp1.fetchData();
         postData();
@@ -190,13 +189,12 @@ public class Robot extends TimedRobot {
         }
 
       }
-      Chassis.setSpeedFactor(1.0);
       Chassis.stop();
     }
     // Line Drive (Drive forward until a red/blue tape line is detected)
     else if (gp1.isKeyToggled(Key.B)) {
       if (!isBlueLine && !isRedLine) {
-        Chassis.driveRaw(0.3, 0);
+        Chassis.driveRaw(-0.175, 0);
         while (true) {
 
           gp1.fetchData();
@@ -223,7 +221,7 @@ public class Robot extends TimedRobot {
       double yTarget = 0;
 
       if (!isBlueLine && !isRedLine) {
-        Chassis.driveRaw(-0.15, 0);
+        Chassis.driveRaw(-0.175, 0);
         while (true) {
 
           gp1.fetchData();
@@ -238,14 +236,14 @@ public class Robot extends TimedRobot {
       }
       //find and set target angle
       targetAngle = Math.toDegrees(Math.atan2(94.66-14-Chassis.sideAligner.getRangeInches(), 206.57-6));
-      gyroPID.setSetpoint(180- targetAngle);
-      lastTargetAngle = targetAngle;
+      gyroPID.setSetpoint(-targetAngle);
+      lastTargetAngle = -targetAngle;
     
         Timer t = new Timer();
 
         t.start();
 
-        while(t.getElaspedTimeInMs() < 1000) {
+        while(t.getElaspedTimeInMs() < 250) {
 
           gp1.fetchData();
 
@@ -257,10 +255,9 @@ public class Robot extends TimedRobot {
       //y 28 14
 
       while (true) {
-        Chassis.driveRaw(0, gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
+        Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
 
         gp1.fetchData();
-        postData();
         if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
           break;
         }
