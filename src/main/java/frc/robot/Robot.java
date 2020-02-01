@@ -236,8 +236,6 @@ public class Robot extends TimedRobot {
     // full integration of sensors for shot line-up
     if (gp1.isKeyToggled(Key.X)) {
       double targetAngle = 0;
-      double xTarget = 0;
-      double yTarget = 0;
 
       if (!isBlueLine && !isRedLine) {
         Chassis.driveRaw(-0.175, 0);
@@ -255,6 +253,8 @@ public class Robot extends TimedRobot {
       }
       //find and set target angle
       targetAngle = Math.toDegrees(Math.atan2(94.66-(30+Chassis.sideAligner.getRangeInches()), 206.57-6));
+      // x from trench line= 206.57in
+      // y from trench line= 94.66in
       gyroPID.setSetpoint(-targetAngle);
       lastTargetAngle = -targetAngle;
     
@@ -270,8 +270,6 @@ public class Robot extends TimedRobot {
             break;
           }
         }
-      //x 14 7
-      //y 28 14
 
       while (true) {
         Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
@@ -280,6 +278,33 @@ public class Robot extends TimedRobot {
         if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
           break;
         }
+      }
+
+      if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
+        double fieldX = 206.57; 
+
+        //finds line
+        //rotates 90 degrees
+        //gets ultrasonic distance from side to calculate distance
+        //drives along line for distance (= fieldX-Chassis.sideAligner.getRangeInches()) to goal
+        //rotates back to 0 degrees, facing goal
+
+        }
+
+        while (true) {
+
+          Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
+  
+          gp1.fetchData();
+          postData();
+          if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
+            break;
+          }
+  
+        }
+        Chassis.stop();
+
+
       }
     }
   }
