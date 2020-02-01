@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
   public double[] color = {};
 
   public PIDController gyroPID;
+  public double lastTargetAngle = 0;
 
   @Override
   public void robotInit() {
@@ -178,7 +179,9 @@ public class Robot extends TimedRobot {
     // rotates robot to Setpoint Angle using PID
     if (gp1.isKeyToggled(Key.A)) {
       while (true) {
-        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
+
+        Chassis.setSpeedFactor(0.15);
+        Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()));
 
         gp1.fetchData();
         postData();
@@ -187,6 +190,7 @@ public class Robot extends TimedRobot {
         }
 
       }
+      Chassis.setSpeedFactor(1.0);
       Chassis.stop();
     }
     // Line Drive (Drive forward until a red/blue tape line is detected)
@@ -219,7 +223,7 @@ public class Robot extends TimedRobot {
       double yTarget = 0;
 
       if (!isBlueLine && !isRedLine) {
-        Chassis.driveRaw(0.3, 0);
+        Chassis.driveRaw(-0.15, 0);
         while (true) {
 
           gp1.fetchData();
@@ -233,10 +237,27 @@ public class Robot extends TimedRobot {
         Chassis.stop();
       }
       //find and set target angle
-      
-      gyroPID.setSetpoint(targetAngle);
+      targetAngle = Math.toDegrees(Math.atan2(94.66-14-Chassis.sideAligner.getRangeInches(), 206.57-6));
+      gyroPID.setSetpoint(180- targetAngle);
+      lastTargetAngle = targetAngle;
+    
+        Timer t = new Timer();
+
+        t.start();
+
+        while(t.getElaspedTimeInMs() < 1000) {
+
+          gp1.fetchData();
+
+          if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
+            break;
+          }
+        }
+      //x 14 7
+      //y 28 14
+
       while (true) {
-        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
+        Chassis.driveRaw(0, gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
 
         gp1.fetchData();
         postData();
@@ -260,14 +281,15 @@ public class Robot extends TimedRobot {
 
   public void postData() {
 
-    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeMM());
-    SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeMM());
+    SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeInches());
+    SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeInches());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
     SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);
     SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
     SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
+    SmartDashboard.putNumber("target Angle", lastTargetAngle);
   }
 
   @Override

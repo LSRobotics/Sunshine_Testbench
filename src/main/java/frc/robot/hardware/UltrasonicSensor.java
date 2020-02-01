@@ -7,11 +7,15 @@ public class UltrasonicSensor {
     private Ultrasonic sensor;
 
     public UltrasonicSensor(int ping, int echo) {
-        sensor = new Ultrasonic(ping,echo,Ultrasonic.Unit.kMillimeters);
+        sensor = new Ultrasonic(ping,echo,Ultrasonic.Unit.kInches);
     }
 
     public void initialize() {
         sensor.setAutomaticMode(true);
+    }
+
+    public double getRangeInches() {
+        return sensor.getRangeInches();
     }
 
     public double getRangeMM() {
