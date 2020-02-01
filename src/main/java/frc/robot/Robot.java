@@ -9,19 +9,14 @@ package frc.robot;
 
 //WPILib
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import com.revrobotics.ColorSensorV3;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import frc.robot.autonomous.AutonBase;
 //Internal
 import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
-import frc.robot.hardware.MotorNG.Model;
 import frc.robot.hardware.Solenoid.Status;
 import frc.robot.software.*;
 
@@ -197,10 +192,9 @@ public class Robot extends TimedRobot {
         Chassis.driveRaw(-0.175, 0);
         while (true) {
 
-          gp1.fetchData();
           updateColorSensor();
 
-          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
+          if (gp1.getRawReading(Key.DPAD_DOWN) != 0 || (isBlueLine || isRedLine)) {
             break;
           }
 
@@ -224,41 +218,30 @@ public class Robot extends TimedRobot {
         Chassis.driveRaw(-0.175, 0);
         while (true) {
 
-          gp1.fetchData();
           updateColorSensor();
 
-          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
+          if (gp1.getRawReading(Key.DPAD_DOWN) == 1 || (isBlueLine || isRedLine)) {
             break;
           }
 
         }
         Chassis.stop();
       }
+
+      AutoPilot.sleep(250,gp1,Key.DPAD_DOWN);
+
       //find and set target angle
       targetAngle = Math.toDegrees(Math.atan2(94.66-14-Chassis.sideAligner.getRangeInches(), 206.57-6));
       gyroPID.setSetpoint(-targetAngle);
       lastTargetAngle = -targetAngle;
     
-        Timer t = new Timer();
-
-        t.start();
-
-        while(t.getElaspedTimeInMs() < 250) {
-
-          gp1.fetchData();
-
-          if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
-            break;
-          }
-        }
       //x 14 7
       //y 28 14
 
       while (true) {
         Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
 
-        gp1.fetchData();
-        if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
+        if (gp1.getRawReading(Key.DPAD_DOWN) != 0 || gyroPID.atSetpoint()) {
           break;
         }
       }
