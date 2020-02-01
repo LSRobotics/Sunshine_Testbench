@@ -158,12 +158,6 @@ public class Robot extends TimedRobot {
       }
     }
 
-    // Assistive Autonomous
-    if (gp1.isKeyToggled(Key.DPAD_LEFT)) {
-      AutoPilot.turnRobotByTime(true);
-    } else if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
-      AutoPilot.turnRobotByTime(false);
-    }
     // Drive control
     else {
       Gamepad.Key yKey = Key.J_RIGHT_Y;

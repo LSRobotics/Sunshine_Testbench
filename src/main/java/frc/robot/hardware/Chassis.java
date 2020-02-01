@@ -57,34 +57,6 @@ public class Chassis {
         }
     }
 
-    static public boolean align() {
-
-        while (true) {
-
-            double front = frontAligner.getRangeMM();
-            double back = sideAligner.getRangeMM();
-
-            Core.robot.gp1.fetchData();
-
-            if (Core.robot.gp1.isKeyHeld(Gamepad.Key.LB)) {
-                stop();
-                return false;
-            }
-
-            if (Math.abs(front - back) < 50) {
-                stop();
-                break;
-            } else if (front > back) {
-                driveRaw(0, 0.5);
-            } else {
-                driveRaw(0, -0.5);
-            }
-
-        }
-
-        return true;
-    }
-
     static public void drive(double y, double x) {
 
         driveRaw(getCurvedSpeed(y) * speedFactor, getCurvedSpeed(x) * speedFactor);
