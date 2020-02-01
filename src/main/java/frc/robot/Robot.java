@@ -288,23 +288,7 @@ public class Robot extends TimedRobot {
         //gets ultrasonic distance from side to calculate distance
         //drives along line for distance (= fieldX-Chassis.sideAligner.getRangeInches()) to goal
         //rotates back to 0 degrees, facing goal
-
-        }
-
-        while (true) {
-
-          Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
-  
-          gp1.fetchData();
-          postData();
-          if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
-            break;
-          }
-  
-        }
-        Chassis.stop();
-
-
+        
       }
     }
   }
