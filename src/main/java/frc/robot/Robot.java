@@ -91,20 +91,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    var wait = false;
-    var signature = 0;
-    var blocksToReturn = 1;
-    var colorTracker = _pixy2.getCCC();
-    var blockCount = colorTracker.getBlocks(wait, signature, blocksToReturn);
-    if (blockCount > 0) //blocks were found for the specified signature
-    {
-      var block = colorTracker.getBlocks().get(0);
-      SmartDashboard.putNumber("Signature ID", block.getSignature());
-      SmartDashboard.putNumber("X", block.getX());
-      SmartDashboard.putNumber("Y", block.getY());
-      SmartDashboard.putNumber("Width", block.getWidth());
-      SmartDashboard.putNumber("Height", block.getHeight());
-    }
   }
 
   @Override
@@ -130,6 +116,7 @@ public class Robot extends TimedRobot {
 
     updateBottom();
     updateTop();
+    Pixy();
 
     postData();
 
@@ -247,8 +234,10 @@ public class Robot extends TimedRobot {
       }
       //find and set target angle
       targetAngle = Math.toDegrees(Math.atan2(94.66-(30+Chassis.sideAligner.getRangeInches()), 206.57-6));
+
       // x from trench line= 206.57in
       // y from trench line= 94.66in
+
       gyroPID.setSetpoint(-targetAngle);
       lastTargetAngle = -targetAngle;
     
@@ -296,6 +285,23 @@ public class Robot extends TimedRobot {
     
   }
 
+  public void Pixy() {
+    var wait = false;
+    var signature = 0;
+    var blocksToReturn = 1;
+    var colorTracker = _pixy2.getCCC();
+    var blockCount = colorTracker.getBlocks(wait, signature, blocksToReturn);
+    if (blockCount > 0) //blocks were found for the specified signature
+    {
+      var block = colorTracker.getBlocks().get(0);
+      SmartDashboard.putNumber("Signature ID", block.getSignature());
+      SmartDashboard.putNumber("X", block.getX());
+      SmartDashboard.putNumber("Y", block.getY());
+      SmartDashboard.putNumber("Width", block.getWidth());
+      SmartDashboard.putNumber("Height", block.getHeight());
+    }
+  }
+
   public void updateTop() {
     updateColorSensor();
   }
@@ -310,7 +316,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);
     SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
     SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
-    SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
+    //SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
   }
 
