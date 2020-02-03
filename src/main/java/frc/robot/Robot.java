@@ -16,8 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import io.github.pseudoresonance.pixy2api.Pixy2;
 import io.github.pseudoresonance.pixy2api.Pixy2.LinkType;
-import frc.robot.autonomous.AutonBase;
-import frc.robot.autonomous.AutonGyroTurn;
+import frc.robot.autonomous.*;
 //Internal
 import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
@@ -49,6 +48,7 @@ public class Robot extends TimedRobot {
   public double[] color = {};
 
   public PIDController gyroPID;
+  public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
   @Override
@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
 
     gyroPID = new PIDController(.045, .85, .005); // variables you test
     gyroPID.setSetpoint(0);
+
+    ultrasonicPID = new PIDController(.045, .85, .005);
 
     // Drive mode GUI setup
     m_chooser.setDefaultOption("Default (Right Stick)", kDefaultDrive);
@@ -178,21 +180,10 @@ public class Robot extends TimedRobot {
     if (gp1.isKeyToggled(Key.A)) {
       new AutonGyroTurn(0, gp1, Key.DPAD_DOWN).run();
     }
+
     // Line Drive (Drive forward until a red/blue tape line is detected)
-    else if (gp1.isKeyToggled(Key.B)) {
-      if (!isBlueLine && !isRedLine) {
-        Chassis.driveRaw(-0.175, 0);
-        while (true) {
-
-          updateColorSensor();
-
-          if (gp1.getRawReading(Key.DPAD_DOWN) != 0 || (isBlueLine || isRedLine)) {
-            break;
-          }
-
-        }
-        Chassis.stop();
-      }
+    else if (gp1.isKeyToggled(Key.B)){
+      new AutonDetectLine(color, gp1, Key.DPAD_DOWN).run();
     }
 
     // resets angle to zero
@@ -204,25 +195,12 @@ public class Robot extends TimedRobot {
     if (gp1.isKeyToggled(Key.X)) {
       double targetAngle = 0;
 
-      if (!isBlueLine && !isRedLine) {
-        Chassis.driveRaw(-0.175, 0);
-        while (true) {
-
-          updateColorSensor();
-
-          if (gp1.getRawReading(Key.DPAD_DOWN) == 1 || (isBlueLine || isRedLine)) {
-            break;
-          }
-
-        }
-        Chassis.stop();
-      }
+      new AutonDetectLine(color, gp1, Key.DPAD_DOWN).run();
 
       AutoPilot.sleep(250,gp1,Key.DPAD_DOWN);
 
       //find and set target angle
       targetAngle = Math.toDegrees(Math.atan2(94.66-(30+Chassis.sideAligner.getRangeInches()), 206.57-6));
-
       // x from trench line= 206.57in
       // y from trench line= 94.66in
 
@@ -242,26 +220,49 @@ public class Robot extends TimedRobot {
           }
         }
 
-      while (true) {
-        Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
-
-        if (gp1.getRawReading(Key.DPAD_DOWN) != 0 || gyroPID.atSetpoint()) {
-          break;
-        }
+        new AutonGyroTurn(targetAngle, gp1, Key.DPAD_DOWN).run();
       }
 
+      //needs to be fixed
       if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
         double fieldX = 206.57; 
 
         //finds line
-        //rotates 90 degrees
+        new AutonDetectLine(color, gp1, Key.DPAD_DOWN).run();
         //gets ultrasonic distance from side to calculate distance
-        //drives along line for distance (= fieldX-Chassis.sideAligner.getRangeInches()) to goal
-        //rotates back to 0 degrees, facing goal
         
+        //rotates 90 degrees
+        new AutonGyroTurn(90, gp1, Key.DPAD_DOWN).run();
+        //drives along line for distance (= fieldX-Chassis.sideAligner.getRangeInches()) to goal
+        Timer t = new Timer();
+
+        t.start();
+
+        while(t.getElaspedTimeInMs() < 2000) {
+
+          Chassis.driveRaw(-0.3, 0);
+
+          if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
+            break;
+          }
+        }
+        //rotates back to 0 degrees, facing goal
+        new AutonGyroTurn(0, gp1, Key.DPAD_DOWN).run();
+      }
+
+      if (gp1.isKeyToggled(Key.DPAD_LEFT)) {
+        ultrasonicPID.setSetpoint(50);
+        while (true) {
+          
+          postData();
+          Chassis.driveRaw(ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()) * .15, 0);
+
+          if(gp1.getRawReading(Key.DPAD_DOWN) != 0) {
+            break;
+          }
+        }
       }
     }
-  }
 
   public void updateColorSensor() {
     color = colorSensor.getColor();
@@ -269,7 +270,6 @@ public class Robot extends TimedRobot {
     isBlueLine = Utils.isColorMatch(color, Statics.TAPE_BLUE, 0.06);
     isRedLine = Utils.isColorMatch(color, Statics.TAPE_RED, 0.06);
     isWhiteLine = Utils.isColorMatch(color, Statics.TAPE_WHITE, 0.02);
-    
   }
 
   public void Pixy() {
@@ -305,6 +305,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
     //SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
+    SmartDashboard.putNumber("ultrasonic PID", ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()));
   }
 
   @Override
