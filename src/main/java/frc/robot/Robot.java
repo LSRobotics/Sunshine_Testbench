@@ -7,23 +7,21 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 //WPILib
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import com.revrobotics.ColorSensorV3;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import io.github.pseudoresonance.pixy2api.Pixy2;
 import io.github.pseudoresonance.pixy2api.Pixy2.LinkType;
+import frc.robot.autonomous.AutonBase;
+import frc.robot.autonomous.AutonGyroTurn;
 //Internal
 import frc.robot.hardware.*;
 import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
-import frc.robot.hardware.MotorNG.Model;
 import frc.robot.hardware.Solenoid.Status;
 import frc.robot.software.*;
 
@@ -178,18 +176,7 @@ public class Robot extends TimedRobot {
 
     // rotates robot to Setpoint Angle using PID
     if (gp1.isKeyToggled(Key.A)) {
-      while (true) {
-
-        Chassis.driveRaw(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
-
-        gp1.fetchData();
-        postData();
-        if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
-          break;
-        }
-
-      }
-      Chassis.stop();
+      new AutonGyroTurn(0, gp1, Key.DPAD_DOWN).run();
     }
     // Line Drive (Drive forward until a red/blue tape line is detected)
     else if (gp1.isKeyToggled(Key.B)) {
@@ -197,10 +184,9 @@ public class Robot extends TimedRobot {
         Chassis.driveRaw(-0.175, 0);
         while (true) {
 
-          gp1.fetchData();
           updateColorSensor();
 
-          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine || isWhiteLine)) {
+          if (gp1.getRawReading(Key.DPAD_DOWN) != 0 || (isBlueLine || isRedLine)) {
             break;
           }
 
@@ -222,16 +208,18 @@ public class Robot extends TimedRobot {
         Chassis.driveRaw(-0.175, 0);
         while (true) {
 
-          gp1.fetchData();
           updateColorSensor();
 
-          if (gp1.isKeyHeld(Key.DPAD_DOWN) || (isBlueLine || isRedLine)) {
+          if (gp1.getRawReading(Key.DPAD_DOWN) == 1 || (isBlueLine || isRedLine)) {
             break;
           }
 
         }
         Chassis.stop();
       }
+
+      AutoPilot.sleep(250,gp1,Key.DPAD_DOWN);
+
       //find and set target angle
       targetAngle = Math.toDegrees(Math.atan2(94.66-(30+Chassis.sideAligner.getRangeInches()), 206.57-6));
 
@@ -257,8 +245,7 @@ public class Robot extends TimedRobot {
       while (true) {
         Chassis.drive(0, -gyroPID.calculate(NavX.navx.getYaw()) * 0.15);
 
-        gp1.fetchData();
-        if (gp1.isKeyHeld(Key.DPAD_DOWN) || gyroPID.atSetpoint()) {
+        if (gp1.getRawReading(Key.DPAD_DOWN) != 0 || gyroPID.atSetpoint()) {
           break;
         }
       }

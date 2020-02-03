@@ -66,6 +66,21 @@ public class AutoPilot {
         return true;
     }
 
+    public static boolean sleep(int milliseconds,Gamepad interruptGamepad, Gamepad.Key interruptKey) {
+
+        Timer timer = new Timer("Sleep Timer");
+
+        timer.start();
+
+        while(timer.getElaspedTimeInMs() < milliseconds) {
+            if(interruptGamepad.getRawReading(interruptKey) != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static boolean turnRobotByTime(boolean isLeft) {
 
         final double power = isLeft ? -0.5 : 0.5;
