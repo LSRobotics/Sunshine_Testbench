@@ -6,7 +6,7 @@ import frc.robot.*;
 
 public class AutonDetectLine extends AutonBase {
     public double[] color = {};
-    public static boolean isBlueLine, isRedLine;
+    public static boolean isBlueLine, isRedLine, isWhiteLine;
 
     public AutonDetectLine (double color[]) {
         super();

@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.autonomous.*;
 //Internal
 import frc.robot.hardware.*;
-import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.Solenoid.Status;
 import frc.robot.software.*;
@@ -48,8 +47,7 @@ public class Robot extends TimedRobot {
   public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
-  public RangeSensor pixyCam = new RangeSensor(0, Type.PIXY_CAM),
-                     usIntake;
+  public RangeSensor usIntake;
 
   @Override
   public void robotInit() {
@@ -79,6 +77,8 @@ public class Robot extends TimedRobot {
 
     gp1 = new Gamepad(0);
     gp2 = new Gamepad(1);
+
+    PixyCam.initialize();
 
     Camera.initialize();
 
@@ -113,10 +113,14 @@ public class Robot extends TimedRobot {
 
   @Override 
   public void testPeriodic() {
-    AutonBase turn = new AutonPixyAlign(0);
-    turn.preRun();
-    while(true) {
-      turn.duringRun();
+    if(PixyCam.getTargetLocation() < -0.05) {
+      Chassis.drive(0,-0.2);
+    }
+    else if(PixyCam.getTargetLocation() > 0.05) {
+      Chassis.drive(0,0.2);
+    }
+    else {
+      Chassis.stop();
     }
   }
 
@@ -276,6 +280,10 @@ public class Robot extends TimedRobot {
       if (gp1.isKeyToggled(Key.J_LEFT_DOWN)) {
         new AutonPixyAlign(0,gp1,Key.DPAD_DOWN).run();
       }
+      
+      if (gp1.isKeyToggled(Key.J_RIGHT_DOWN)) {
+        PixyCam.switchLED(!PixyCam.isLedOn);
+      }
     }
 
   public void updateColorSensor() {
@@ -306,8 +314,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
     SmartDashboard.putNumber("ultrasonic PID", ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()));
     SmartDashboard.putNumber("IR Sensor", usIntake.getRangeInches());
-    SmartDashboard.putNumber("PIXY CAM", pixyCam.getRangeInches());
+    SmartDashboard.putNumber("PIXY CAM", PixyCam.getTargetLocation());
     SmartDashboard.putNumber("Front Voltage",Chassis.frontAligner.analog.getVoltage());
+    SmartDashboard.putNumber("LED Voltage",PixyCam.led.getVoltage());
     //SmartDashboard.put;
   }
 }

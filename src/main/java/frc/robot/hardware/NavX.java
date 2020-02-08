@@ -11,6 +11,7 @@ public class NavX {
 
         try {
             navx = new AHRS(SPI.Port.kMXP);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,7 +30,7 @@ public class NavX {
         }
 
     }
-
+ 
     public static double getDisplacement (Axis axis) {
         
         if(axis == Axis.X) {

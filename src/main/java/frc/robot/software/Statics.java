@@ -41,4 +41,7 @@ public class Statics {
     public static final int US_INTAKE_PING = 2,
                             US_INTAKE_ECHO = 3;
 
+    public static final int PIXY_CAM = 0,
+                            PIXY_CAM_LED = 0;
+
 }
