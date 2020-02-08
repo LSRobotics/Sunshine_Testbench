@@ -13,8 +13,9 @@ public class Chassis {
     static Compressor compressor;
     public static Solenoid shifter;
 
-    public static RangeSensor frontAligner = new RangeSensor(4, Type.ANALOG_IR_GP2Y0A710K0F),
-                                   sideAligner  = new RangeSensor(Statics.US_ALIGNER_S, Type.ANALOG_US_MAXBOTIX);
+    public static RangeSensor frontAligner = new RangeSensor(2, Type.ANALOG_US_MAXBOTIX),
+                              sensorIR = new RangeSensor(3, Type.ANALOG_IR_GP2Y0A710K0F),
+                              sideAligner  = new RangeSensor(1, Type.ANALOG_US_MAXBOTIX);
 
     static SpeedCurve curve = SpeedCurve.LINEAR;
 

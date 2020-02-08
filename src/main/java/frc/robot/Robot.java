@@ -47,8 +47,6 @@ public class Robot extends TimedRobot {
   public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
-  public RangeSensor usIntake;
-
   @Override
   public void robotInit() {
 
@@ -60,8 +58,6 @@ public class Robot extends TimedRobot {
     gyroPID.setSetpoint(0);
 
     ultrasonicPID = new PIDController(.045, .85, .005);
-
-    usIntake = new RangeSensor(Statics.US_INTAKE_PING, Statics.US_INTAKE_ECHO,Type.DIO_US_HC_SR04);
 
     // Drive mode GUI setup
     m_chooser.setDefaultOption("Default (Right Stick)", kDefaultDrive);
@@ -187,7 +183,7 @@ public class Robot extends TimedRobot {
         break;
 
       }
-      Chassis.drive(Utils.mapAnalog(gp1.getValue(yKey)), -gp1.getValue(xKey));
+      Chassis.drive(-Utils.mapAnalog(gp1.getValue(yKey)), -gp1.getValue(xKey));
     }
 
     // rotates robot to Setpoint Angle using PID
@@ -304,18 +300,19 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeInches());
     SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeInches());
+    SmartDashboard.putNumber("IR Sensor", Chassis.sensorIR.getRangeInches());
     SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
     SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);
     SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
     SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
-    //SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
+    SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
     SmartDashboard.putNumber("ultrasonic PID", ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()));
-    SmartDashboard.putNumber("IR Sensor", usIntake.getRangeInches());
     SmartDashboard.putNumber("PIXY CAM", PixyCam.getTargetLocation());
     SmartDashboard.putNumber("Front Voltage",Chassis.frontAligner.analog.getVoltage());
+    SmartDashboard.putNumber("Front value",Chassis.frontAligner.analog.getValue());
     SmartDashboard.putNumber("LED Voltage",PixyCam.led.getVoltage());
     //SmartDashboard.put;
   }

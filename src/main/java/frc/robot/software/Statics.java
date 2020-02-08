@@ -35,11 +35,11 @@ public class Statics {
 //Colors
     static final public double[] TAPE_RED = {0.47,0.37,0.16},
                                  TAPE_BLUE = {0.21,0.42,0.36},
-                                 TAPE_WHITE = {0.26,0.46,0.27};
+                                 TAPE_WHITE = {0.257,.465,.278};
 
     //Intake Ultrasonic
-    public static final int US_INTAKE_PING = 2,
-                            US_INTAKE_ECHO = 3;
+    public static final int US_IR_PING = 0,
+                            US_IR_ECHO = 1;
 
     public static final int PIXY_CAM = 0,
                             PIXY_CAM_LED = 0;
