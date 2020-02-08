@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+  
   }
 
   @Override
@@ -108,6 +109,15 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // TODO: ACTUALLY DO SOME KIND OF AUTON
     teleopPeriodic();
+  }
+
+  @Override 
+  public void testPeriodic() {
+    AutonBase turn = new AutonPixyAlign(0);
+    turn.preRun();
+    while(true) {
+      turn.duringRun();
+    }
   }
 
   @Override
@@ -264,21 +274,7 @@ public class Robot extends TimedRobot {
       }
 
       if (gp1.isKeyToggled(Key.J_LEFT_DOWN)) {
-        double pixyTarget = .5;
-        //to left?
-        if (pixyCam.getRangeInches() < pixyTarget) {
-          Chassis.driveRaw(-.2,0);
-          if (pixyCam.getRangeInches() == pixyTarget) {
-            Chassis.stop();
-          }
-        }
-        //to right?
-        if (pixyCam.getRangeInches() > pixyTarget) {
-          Chassis.driveRaw(.2,0);
-          if (pixyCam.getRangeInches() == pixyTarget) {
-            Chassis.stop();
-          }
-        }
+        new AutonPixyAlign(0,gp1,Key.DPAD_DOWN).run();
       }
     }
 
@@ -311,10 +307,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ultrasonic PID", ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()));
     SmartDashboard.putNumber("IR Sensor", usIntake.getRangeInches());
     SmartDashboard.putNumber("PIXY CAM", pixyCam.getRangeInches());
+    SmartDashboard.putNumber("Front Voltage",Chassis.frontAligner.analog.getVoltage());
     //SmartDashboard.put;
-  }
-
-  @Override
-  public void testPeriodic() {
   }
 }

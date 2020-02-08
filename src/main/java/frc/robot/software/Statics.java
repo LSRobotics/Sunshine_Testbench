@@ -20,10 +20,9 @@ public class Statics {
                             CHASSIS_R2 = 5;
 
 //TODO: UPDATE THIS
-    static final public int US_ALIGNER_F_PING  = 6,
-                            US_ALIGNER_F_ECHO  = 7,
-                            US_ALIGNER_S_PING  = 8,
-                            US_ALIGNER_S_ECHO  = 9;
+
+    static final public int US_ALIGNER_S = 3,
+                            US_ALIGNER_F = 2;
 
 //Shifting Gearbox
     static final public int SHIFTER_PCM = 0,
@@ -41,4 +40,5 @@ public class Statics {
     //Intake Ultrasonic
     public static final int US_INTAKE_PING = 2,
                             US_INTAKE_ECHO = 3;
+
 }

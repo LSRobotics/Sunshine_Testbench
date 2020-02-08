@@ -14,7 +14,7 @@ public class RangeSensor {
 
     private boolean isInitialized = false;
     private Ultrasonic dio;
-    private AnalogInput analog;
+    public AnalogInput analog;
     private Type type;
 
 
@@ -53,7 +53,7 @@ public class RangeSensor {
             case ANALOG_IR_GP2Y0A710K0F:
                 return 430.75 * Math.pow(analog.getAverageVoltage(), -3.7031) + 23.645; //Stole from FRC 2017 haha
             case PIXY_CAM:
-                return analog.getValue() / 3.3;
+                return (analog.getAverageVoltage() / 3.3 * 2) - 1;
             default: return 0;
         }
     }
