@@ -63,6 +63,8 @@ public class Chassis {
 
     }
 
+    //x = rotation
+    //y = forward/reverse
     static public void driveRaw(double y, double x) {
         final double left = Utils.clipValue(y + x, -1.0, 1.0);
         final double right = Utils.clipValue(y - x, -1.0, 1.0);

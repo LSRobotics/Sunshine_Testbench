@@ -14,8 +14,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import io.github.pseudoresonance.pixy2api.Pixy2;
-import io.github.pseudoresonance.pixy2api.Pixy2.LinkType;
 import frc.robot.autonomous.*;
 //Internal
 import frc.robot.hardware.*;
@@ -23,6 +21,7 @@ import frc.robot.hardware.NavX;
 import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.Solenoid.Status;
 import frc.robot.software.*;
+import frc.robot.hardware.RangeSensor.Type;
 
 public class Robot extends TimedRobot {
 
@@ -31,8 +30,6 @@ public class Robot extends TimedRobot {
   public Gamepad gp1, gp2;
 
   public static double driveSpeed = 1.0;
-
-  private final Pixy2 _pixy2 = Pixy2.createInstance(LinkType.SPI);
 
   // Drive mode GUI variables and setup
   public static final String kDefaultDrive = "Default (Right Stick)";
@@ -51,18 +48,22 @@ public class Robot extends TimedRobot {
   public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
+  public RangeSensor pixyCam = new RangeSensor(0, Type.PIXY_CAM),
+                     usIntake;
+
   @Override
   public void robotInit() {
 
     NavX.initialize();
     NavX.navx.zeroYaw();
 
-    _pixy2.init(0);
 
     gyroPID = new PIDController(.045, .85, .005); // variables you test
     gyroPID.setSetpoint(0);
 
     ultrasonicPID = new PIDController(.045, .85, .005);
+
+    usIntake = new RangeSensor(Statics.US_INTAKE_PING, Statics.US_INTAKE_ECHO,Type.DIO_US_HC_SR04);
 
     // Drive mode GUI setup
     m_chooser.setDefaultOption("Default (Right Stick)", kDefaultDrive);
@@ -116,7 +117,6 @@ public class Robot extends TimedRobot {
 
     updateBottom();
     updateTop();
-    Pixy();
 
     postData();
 
@@ -262,6 +262,24 @@ public class Robot extends TimedRobot {
           }
         }
       }
+
+      if (gp1.isKeyToggled(Key.J_LEFT_DOWN)) {
+        double pixyTarget = .5;
+        //to left?
+        if (pixyCam.getRangeInches() < pixyTarget) {
+          Chassis.driveRaw(-.2,0);
+          if (pixyCam.getRangeInches() == pixyTarget) {
+            Chassis.stop();
+          }
+        }
+        //to right?
+        if (pixyCam.getRangeInches() > pixyTarget) {
+          Chassis.driveRaw(.2,0);
+          if (pixyCam.getRangeInches() == pixyTarget) {
+            Chassis.stop();
+          }
+        }
+      }
     }
 
   public void updateColorSensor() {
@@ -272,22 +290,7 @@ public class Robot extends TimedRobot {
     isWhiteLine = Utils.isColorMatch(color, Statics.TAPE_WHITE, 0.02);
   }
 
-  public void Pixy() {
-    var wait = false;
-    var signature = 0;
-    var blocksToReturn = 1;
-    var colorTracker = _pixy2.getCCC();
-    var blockCount = colorTracker.getBlocks(wait, signature, blocksToReturn);
-    if (blockCount > 0) //blocks were found for the specified signature
-    {
-      var block = colorTracker.getBlocks().get(0);
-      SmartDashboard.putNumber("Signature ID", block.getSignature());
-      SmartDashboard.putNumber("X", block.getX());
-      SmartDashboard.putNumber("Y", block.getY());
-      SmartDashboard.putNumber("Width", block.getWidth());
-      SmartDashboard.putNumber("Height", block.getHeight());
-    }
-  }
+
 
   public void updateTop() {
     updateColorSensor();
@@ -306,6 +309,9 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
     SmartDashboard.putNumber("ultrasonic PID", ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()));
+    SmartDashboard.putNumber("IR Sensor", usIntake.getRangeInches());
+    SmartDashboard.putNumber("PIXY CAM", pixyCam.getRangeInches());
+    //SmartDashboard.put;
   }
 
   @Override
