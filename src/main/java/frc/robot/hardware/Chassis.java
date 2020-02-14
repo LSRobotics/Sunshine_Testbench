@@ -32,6 +32,13 @@ public class Chassis {
 
     }
 
+    static public void flip() {
+        l1.flip();
+        l2.flip();
+        r1.flip();
+        r2.flip();
+    } 
+
     static public void shift() {
         shifter.actuate();
     }
