@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   
   public String m_driveSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public static boolean isBlueLine, isRedLine, isWhiteLine;
+  public static boolean isBlueLine, isRedLine, isWhiteLine, isYellowCP, isRedCP, isGreenCP, isBlueCP; //CP = control panel
 
   public RGBSensor colorSensor = new RGBSensor();
   public double[] color = {};
@@ -207,30 +207,9 @@ public class Robot extends TimedRobot {
 
       new AutonDetectLine(color, gp1, Key.DPAD_DOWN).run();
 
-      AutoPilot.sleep(250,gp1,Key.DPAD_DOWN);
+      AutoPilot.sleep(150,gp1,Key.DPAD_DOWN);
 
-      //find and set target angle
-      targetAngle = Math.toDegrees(Math.atan2(94.66-(30+Chassis.sideAligner.getRangeInches()), 206.57-6));
-      // x from trench line= 206.57in
-      // y from trench line= 94.66in
-
-      gyroPID.setSetpoint(-targetAngle);
-      lastTargetAngle = -targetAngle;
-    
-        Timer t = new Timer();
-
-        t.start();
-
-        while(t.getElaspedTimeInMs() < 250) {
-
-          gp1.fetchData();
-
-          if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
-            break;
-          }
-        }
-
-        new AutonGyroTurn(targetAngle, gp1, Key.DPAD_DOWN).run();
+      new AutonPixyAlign(0,gp1,Key.DPAD_DOWN).run();
       }
 
       //needs to be fixed
@@ -288,6 +267,11 @@ public class Robot extends TimedRobot {
     isBlueLine = Utils.isColorMatch(color, Statics.TAPE_BLUE, 0.06);
     isRedLine = Utils.isColorMatch(color, Statics.TAPE_RED, 0.06);
     isWhiteLine = Utils.isColorMatch(color, Statics.TAPE_WHITE, 0.02);
+    isYellowCP = Utils.isColorMatch(color, Statics.CONTROLPANEL_YELLOW, 0.02);
+    isRedCP = Utils.isColorMatch(color, Statics.CONTROLPANEL_RED, 0.02);
+    isGreenCP = Utils.isColorMatch(color, Statics.CONTROLPANEL_GREEN, 0.02);
+    isBlueCP = Utils.isColorMatch(color, Statics.CONTROLPANEL_BLUE, 0.02);
+
   }
 
 
@@ -314,6 +298,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Front Voltage",Chassis.frontAligner.analog.getVoltage());
     SmartDashboard.putNumber("Front value",Chassis.frontAligner.analog.getValue());
     SmartDashboard.putNumber("LED Voltage",PixyCam.led.getVoltage());
-    //SmartDashboard.put;
+    SmartDashboard.putBoolean("Yellow", isYellowCP);
+    SmartDashboard.putBoolean("Red", isRedCP);
+    SmartDashboard.putBoolean("Green", isGreenCP);
+    SmartDashboard.putBoolean("Blue", isBlueCP);
   }
 }

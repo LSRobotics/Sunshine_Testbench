@@ -6,7 +6,7 @@ import frc.robot.hardware.*;
 public class AutonPixyAlign extends AutonBase {
     
     double target;
-    PIDController pid = new PIDController(.045, .75, .005);
+    PIDController pid = new PIDController(1.5, 0, 0);
 
     public AutonPixyAlign (double target) {
         super();
@@ -25,12 +25,14 @@ public class AutonPixyAlign extends AutonBase {
     @Override
     public void duringRun() {
 
-        Chassis.driveRaw(0,-pid.calculate(PixyCam.getTargetLocation()) * 0.2 );
+
+        Chassis.driveRaw(0,-pid.calculate(PixyCam.getTargetLocation()));
         robot.postData();
     }
 
     @Override
     public boolean isActionDone() {
-        return pid.atSetpoint();
+        return false;
+        //return pid.atSetpoint();
     }
 }
