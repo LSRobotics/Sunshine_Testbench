@@ -25,7 +25,7 @@ public class AutonPixyAlign extends AutonBase {
     @Override
     public void duringRun() {
 
-        Chassis.driveRaw(0,pid.calculate(PixyCam.getTargetLocation()) * 0.2 );
+        Chassis.driveRaw(0,-pid.calculate(PixyCam.getTargetLocation()) * 0.2 );
         robot.postData();
     }
 

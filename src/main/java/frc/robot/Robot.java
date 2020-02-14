@@ -183,7 +183,7 @@ public class Robot extends TimedRobot {
         break;
 
       }
-      Chassis.drive(-Utils.mapAnalog(gp1.getValue(yKey)), -gp1.getValue(xKey));
+      Chassis.drive(-Utils.mapAnalog(gp1.getValue(yKey)), gp1.getValue(xKey));
     }
 
     // rotates robot to Setpoint Angle using PID

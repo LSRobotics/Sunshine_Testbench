@@ -23,10 +23,10 @@ public class Chassis {
 
         shifter = new Solenoid(Statics.SHIFTER_PCM, Statics.SHIFTER_F, Statics.SHIFTER_R);
 
-        l1 = new MotorNG(Statics.CHASSIS_L1, Model.TALON_SRX);
-        l2 = new MotorNG(Statics.CHASSIS_L2, Model.TALON_SRX);
-        r1 = new MotorNG(Statics.CHASSIS_R1, Model.TALON_SRX, true);
-        r2 = new MotorNG(Statics.CHASSIS_R2, Model.TALON_SRX, true);
+        l1 = new MotorNG(Statics.CHASSIS_L1, Model.TALON_SRX,true);
+        l2 = new MotorNG(Statics.CHASSIS_L2, Model.TALON_SRX,true);
+        r1 = new MotorNG(Statics.CHASSIS_R1, Model.TALON_SRX);
+        r2 = new MotorNG(Statics.CHASSIS_R2, Model.TALON_SRX);
 
         compressor = new Compressor();
 
