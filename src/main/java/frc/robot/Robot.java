@@ -209,28 +209,7 @@ public class Robot extends TimedRobot {
 
       //needs to be fixed
       if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
-
-        //finds line
-        new AutonDetectLine(color, gp1, Key.DPAD_DOWN).run();
-        //gets ultrasonic distance from side to calculate distance
-        
-        //rotates 90 degrees
-        new AutonGyroTurn(90, gp1, Key.DPAD_DOWN).run();
-        //drives along line for distance (= fieldX-Chassis.sideAligner.getRangeInches()) to goal
-        Timer t = new Timer();
-
-        t.start();
-
-        while(t.getElaspedTimeInMs() < 2000) {
-
-          Chassis.driveRaw(-0.3, 0);
-
-          if(gp1.isKeyHeld(Key.DPAD_DOWN)) {
-            break;
-          }
-        }
-        //rotates back to 0 degrees, facing goal
-        new AutonGyroTurn(0, gp1, Key.DPAD_DOWN).run();
+        Statics.autonToCenter.run();
       }
 
       if (gp1.isKeyToggled(Key.DPAD_LEFT)) {

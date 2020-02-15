@@ -67,7 +67,7 @@ public class AutonBase {
 
 
     public void postRun() {
-
+        Chassis.stop();
     }
     
 }
