@@ -33,6 +33,7 @@ public class AutonBase {
             interruptGamepad.fetchData();
 
             duringRun();
+            robot.postData();
 
             if(!isGamepadGood()) {
                 postRun();

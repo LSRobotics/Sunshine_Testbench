@@ -8,7 +8,8 @@ public class AutonRSMove extends AutonBase{
     
     RangeSensor sensor;
     double targetDistance;
-    SmartPID pid;
+    double diff = 10000;
+    //SmartPID pid;
 
     public AutonRSMove(RangeSensor sensor, double targetDistance) {
         super();
@@ -24,18 +25,33 @@ public class AutonRSMove extends AutonBase{
     
     @Override
     public void preRun() {
-        pid = new SmartPID(1.75, 0, 0.6);
-        pid.setSetpoint(targetDistance);
+        //pid = new SmartPID(1.2, 0, 1);
+        //pid.setSetpoint(targetDistance);
     }
 
     @Override
     public void duringRun() {
-        Chassis.driveRaw(pid.next(sensor.getRangeInches()),0);
+        
+        double distanceLeft = sensor.getRangeInches() - targetDistance;
+
+        diff = distanceLeft;
+
+        if(Math.abs(distanceLeft) < 10) {
+            Chassis.driveRaw((distanceLeft > 0) ? 0.1 : -0.1, 0);
+        }
+        else {
+            Chassis.driveRaw((distanceLeft > 0) ? 0.3 : -0.3, 0);
+        }
+
+        //Chassis.driveRaw(-pid.next(sensor.getRangeInches()) * 0.2,0);
     }
 
     @Override
     public boolean isActionDone() {
-        return pid.isActionDone();
+        
+        return Math.abs(diff) < 3;
+        //return pid.atSetpoint();
+        //return pid.isActionDone();
     }
 
     @Override

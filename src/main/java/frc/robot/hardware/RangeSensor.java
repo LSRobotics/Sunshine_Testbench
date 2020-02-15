@@ -48,7 +48,7 @@ public class RangeSensor {
         double voltage = 0;
 
         if(type != Type.DIO_US_HC_SR04) {
-            voltage = analog.getVoltage();
+            voltage = analog.getAverageVoltage();
         }
 
         switch(type) {

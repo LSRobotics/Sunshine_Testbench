@@ -2,6 +2,8 @@ package frc.robot.autonomous;
 
 import java.util.ArrayList;
 
+import frc.robot.software.Utils;
+
 public class AutonGroup {
     
     private ArrayList<AutonBase> actions = new ArrayList<AutonBase>();
@@ -13,7 +15,10 @@ public class AutonGroup {
     }
 
     public boolean run() {
+        int counter = 0;
         for(AutonBase i : actions) {
+            counter ++;
+            Utils.report("Running Action " + counter);
             if(!i.run()) {
                 return false;
             }
