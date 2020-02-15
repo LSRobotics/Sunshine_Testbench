@@ -32,7 +32,7 @@ public class SmartPID extends PIDController {
                 avg += Math.abs(history.get(i)) * (1/5);
             }
 
-            if(avg < 0.1) {
+            if(avg < 0.01) {
                 isActionDone = true;
             }
         }

@@ -209,7 +209,6 @@ public class Robot extends TimedRobot {
 
       //needs to be fixed
       if (gp1.isKeyToggled(Key.DPAD_RIGHT)) {
-        double fieldX = 206.57; 
 
         //finds line
         new AutonDetectLine(color, gp1, Key.DPAD_DOWN).run();
