@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.autonomous.*;
 //Internal
+import frc.robot.constants.*;
 import frc.robot.hardware.*;
 import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.Solenoid.Status;
@@ -65,6 +66,7 @@ public class Robot extends TimedRobot {
     Core.initialize(this);
 
     Chassis.initialize();
+    Chassis.setSpeedCurve(SpeedCurve.SQUARED);
 
     gp1 = new Gamepad(0);
     gp2 = new Gamepad(1);
@@ -282,19 +284,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
     SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);
-    SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
-    SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
-    SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putNumber("target Angle", lastTargetAngle);
     SmartDashboard.putNumber("ultrasonic PID", ultrasonicPID.calculate(Chassis.frontAligner.getRangeInches()));
     SmartDashboard.putNumber("PIXY CAM", PixyCam.getTargetLocation());
     SmartDashboard.putNumber("Front Voltage",Chassis.frontAligner.analog.getVoltage());
     SmartDashboard.putNumber("Front value",Chassis.frontAligner.analog.getValue());
     SmartDashboard.putNumber("LED Voltage",PixyCam.led.getVoltage());
+
+    //color sensor booleans
+    SmartDashboard.putBoolean("Is Blue Line Detected", isBlueLine);
+    SmartDashboard.putBoolean("Is Red Line Detected", isRedLine);
+    SmartDashboard.putBoolean("Is White Line Detected", isWhiteLine);
     SmartDashboard.putBoolean("Yellow", isYellowCP);
     SmartDashboard.putBoolean("Red", isRedCP);
     SmartDashboard.putBoolean("Green", isGreenCP);
     SmartDashboard.putBoolean("Blue", isBlueCP);
-    //SmartDashboard.putNumber("PID value", )
   }
 }

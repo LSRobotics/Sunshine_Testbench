@@ -36,7 +36,7 @@ public class SmartPID extends PIDController {
                 }
             }
 
-            if(max < 0.05) {
+            if(max < 0.1) {
                 Utils.report("Detected, Current Value:" + result);
                 isActionDone = true;
             }
