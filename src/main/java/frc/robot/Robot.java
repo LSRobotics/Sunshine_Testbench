@@ -295,5 +295,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Red", isRedCP);
     SmartDashboard.putBoolean("Green", isGreenCP);
     SmartDashboard.putBoolean("Blue", isBlueCP);
+    //SmartDashboard.putNumber("PID value", )
   }
 }
