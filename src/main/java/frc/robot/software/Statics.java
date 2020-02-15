@@ -51,11 +51,14 @@ public class Statics {
     public static final int PIXY_CAM = 0,
                             PIXY_CAM_LED = 0;
 
-    public static final AutonGroup autonToCenter = new AutonGroup(new AutonGyroTurn(90),
-                                                                  new AutonSleep(250),
-                                                                  new AutonRSMove(Chassis.frontAligner, 94.125),
-                                                                  new AutonSleep(250),
-                                                                  new AutonGyroTurn(0),
-                                                                  new AutonPixyAlign(0));
+    //Init in Core
+    public static AutonGroup autonToCenter = new AutonGroup(new AutonGyroTurn(90),
+                                new AutonSleep(250),
+                                new AutonRSMove(Chassis.sensorIR, 94.125),
+                                new AutonSleep(250),
+                                new AutonGyroTurn(0),
+                                new AutonSleep(250),
+                                new AutonRSMove(Chassis.sensorIR, 153.875),
+                                new AutonPixyAlign(0));
 
 }

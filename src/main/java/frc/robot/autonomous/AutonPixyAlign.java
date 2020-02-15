@@ -5,7 +5,7 @@ import frc.robot.hardware.*;
 import frc.robot.software.SmartPID;
 
 public class AutonPixyAlign extends AutonBase {
-    //2.36 meters is pixy range
+    //221 inches is pixy range
 
     double target;
     SmartPID pid;

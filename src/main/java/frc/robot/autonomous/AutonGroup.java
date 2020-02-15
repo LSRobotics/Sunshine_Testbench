@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class AutonGroup {
     
-    private ArrayList<AutonBase> actions;
+    private ArrayList<AutonBase> actions = new ArrayList<AutonBase>();
 
     public AutonGroup(AutonBase... actions) {
         for(AutonBase i : actions) {

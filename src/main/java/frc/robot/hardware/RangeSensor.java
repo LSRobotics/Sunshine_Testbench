@@ -48,21 +48,22 @@ public class RangeSensor {
         double voltage = 0;
 
         if(type != Type.DIO_US_HC_SR04) {
-            voltage = analog.getAverageVoltage();
+            voltage = analog.getVoltage();
         }
 
         switch(type) {
             case ANALOG_US_MAXBOTIX:
-                return voltage;
-                //return -2.3683*Math.pow(voltage, 4)+16.656*Math.pow(voltage, 3)-40.14*Math.pow(voltage, 2)+79.366*voltage-12.245;
+                return 
+                //0.2886*Math.pow(voltage, 4)-2.9291*Math.pow(voltage, 3)+11.575*Math.pow(voltage, 2)+21.765*voltage+12.541;
                 //((analog.getValue())*.125);
+                1.7503*Math.pow(voltage, 2)+34.221*voltage+7.6138;
             case DIO_US_HC_SR04:
                 return dio.getRangeInches();
             case ANALOG_IR_GP2Y0A710K0F:
-                return voltage;
-                //return 430.75 * Math.pow(voltage, -3.7031) + 23.645; //Stole from FRC 2017 haha
-                //-11.485*Math.pow(voltage, 4)-3.5615*Math.pow(voltage, 3)+113.1*Math.pow(voltage, 2)-181.31*voltage+92.965;
+                return 
                 //430.75 * Math.pow(voltage, -3.7031) + 23.645; //Stole from FRC 2017 haha
+                89.217*Math.pow(voltage, 4)-922.91*Math.pow(voltage, 3)+3522.2*Math.pow(voltage, 2)-5925.3*voltage+3788.1; //good!!!
+                //371.67*Math.pow(voltage, 2)-1502.3*voltage+1583.4;
             case PIXY_CAM:
                 return (voltage / 3.3 * 2) - 1;
             default: return 0;
