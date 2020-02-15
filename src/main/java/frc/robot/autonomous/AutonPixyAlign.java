@@ -30,13 +30,15 @@ public class AutonPixyAlign extends AutonBase {
     }
 
 
+    /*
     @Override
     public boolean isGamepadGood() {
         return !interruptGamepad.isGamepadChanged();
     }
+    */
 
     @Override
     public boolean isActionDone() {
-        return isActionDone();
+        return pid.isActionDone();
     }
 }

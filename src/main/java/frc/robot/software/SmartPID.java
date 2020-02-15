@@ -24,15 +24,20 @@ public class SmartPID extends PIDController {
             timer.start();
         }
 
-        if(history.size() != 0 && history.size() % 5 == 0) {
+        if(history.size() > 4 && history.size() % 5 == 0) {
 
-            double avg = 0;
+            double max = 0;
 
-            for(int i = history.size() - 6; i < history.size(); ++i) {
-                avg += Math.abs(history.get(i)) * (1/5);
+            for(int i = history.size() - 5; i < history.size(); ++i) {
+                double val = Math.abs(history.get(i));
+
+                if(val > max) {
+                    max = val;
+                }
             }
 
-            if(avg < 0.01) {
+            if(max < 0.05) {
+                Utils.report("Detected, Current Value:" + result);
                 isActionDone = true;
             }
         }
