@@ -1,6 +1,7 @@
 package frc.robot.autonomous;
 
 import frc.robot.hardware.*;
+import frc.robot.hardware.Gamepad.Key;
 import frc.robot.*;
 import frc.robot.software.*;
 
@@ -9,17 +10,17 @@ public class AutonBase {
     Gamepad interruptGamepad;
     Gamepad.Key interruptKey;
     Robot robot;
-    boolean isAutonPeriod = false;
+
 
     public AutonBase(Gamepad interruptGamepad, Gamepad.Key interruptKey) {
         this.interruptGamepad = interruptGamepad;
         this.interruptKey = interruptKey;
-        isAutonPeriod = false;
+        //isAutonPeriod = false;
         robot = Core.robot;
     }
 
     public AutonBase() {
-        isAutonPeriod = true;
+        this(Core.robot.gp1, Key.DPAD_DOWN);
         robot = Core.robot;
     }
 
@@ -28,10 +29,12 @@ public class AutonBase {
         preRun();
     
         while(true) {
-        
+
+            interruptGamepad.fetchData();
+
             duringRun();
 
-            if(!isAutonPeriod && !isGamepadGood()) {
+            if(!isGamepadGood()) {
                 postRun();
                 return false;
             } 
@@ -54,7 +57,7 @@ public class AutonBase {
 
     }
 
-    final public boolean isGamepadGood() {
+    public boolean isGamepadGood() {
         return interruptGamepad.getRawReading(interruptKey) == 0;
     }
  

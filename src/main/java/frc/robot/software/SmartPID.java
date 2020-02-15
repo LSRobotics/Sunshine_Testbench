@@ -25,10 +25,23 @@ public class SmartPID extends PIDController {
         }
 
         if(history.size() != 0 && history.size() % 5 == 0) {
-            
+
+            double avg = 0;
+
+            for(int i = history.size() - 6; i < history.size(); ++i) {
+                avg += Math.abs(history.get(i)) * (1/5);
+            }
+
+            if(avg < 0.1) {
+                isActionDone = true;
+            }
         }
 
         return result;
 
+    }
+
+    public boolean isActionDone() {
+        return isActionDone;
     }
 }

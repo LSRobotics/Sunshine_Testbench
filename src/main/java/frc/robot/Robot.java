@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
   public RGBSensor colorSensor = new RGBSensor();
   public double[] color = {};
 
-  public PIDController gyroPID;
   public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
@@ -52,10 +51,6 @@ public class Robot extends TimedRobot {
 
     NavX.initialize();
     NavX.navx.zeroYaw();
-
-
-    gyroPID = new PIDController(.045, .85, .005); // variables you test
-    gyroPID.setSetpoint(0);
 
     ultrasonicPID = new PIDController(.045, .85, .005);
 
@@ -285,7 +280,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Front Ultrasonic", Chassis.frontAligner.getRangeInches());
     SmartDashboard.putNumber("Side Ultrasonic", Chassis.sideAligner.getRangeInches());
     SmartDashboard.putNumber("IR Sensor", Chassis.sensorIR.getRangeInches());
-    SmartDashboard.putNumber("PID calculate", gyroPID.calculate(NavX.navx.getAngle()));
     SmartDashboard.putString("Current Gear", (Chassis.shifter.status == Status.FORWARD ? "Low" : "High"));
     SmartDashboard.putNumber("Angle", NavX.navx.getYaw());
     SmartDashboard.putString("Color Sensor (R,G,B)", color[0] + ", " + color[1] + ", " + color[2]);

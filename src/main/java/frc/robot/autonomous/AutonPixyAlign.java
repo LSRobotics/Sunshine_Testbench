@@ -1,12 +1,12 @@
 package frc.robot.autonomous;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.hardware.*;
+import frc.robot.software.SmartPID;
 
 public class AutonPixyAlign extends AutonBase {
     
     double target;
-    PIDController pid = new PIDController(1.5, 0, 0);
+    SmartPID pid;
 
     public AutonPixyAlign (double target) {
         super();
@@ -19,20 +19,24 @@ public class AutonPixyAlign extends AutonBase {
     
     @Override
     public void preRun() {
+        pid = new SmartPID(1.5, 0, 0);
         pid.setSetpoint(target);
     }
 
     @Override
     public void duringRun() {
-
-
-        Chassis.driveRaw(0,-pid.calculate(PixyCam.getTargetLocation()));
+        Chassis.driveRaw(0,-pid.next(PixyCam.getTargetLocation()));
         robot.postData();
+    }
+
+
+    @Override
+    public boolean isGamepadGood() {
+        return !interruptGamepad.isGamepadChanged();
     }
 
     @Override
     public boolean isActionDone() {
-        return false;
-        //return pid.atSetpoint();
+        return isActionDone();
     }
 }
