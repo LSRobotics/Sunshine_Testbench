@@ -19,12 +19,6 @@ public class PixyCam {
 
     public static double getTargetLocation() {
 
-        /*
-        if(!isLedOn) {
-            switchLED(true);
-        }
-        */
-
         return (pixy.getAverageVoltage()/3.3 * 2) - 1;
     }
 

@@ -32,6 +32,10 @@ public class Chassis {
 
     }
 
+    static public void setGear(boolean isHighGear) {
+        shifter.move(!isHighGear, isHighGear);
+    }
+
     static public void flip() {
         l1.flip();
         l2.flip();

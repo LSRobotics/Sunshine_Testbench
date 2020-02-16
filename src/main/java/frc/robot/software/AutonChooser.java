@@ -3,12 +3,15 @@ package frc.robot.software;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.hardware.*;
+import frc.robot.autonomous.*;
+
 /**
  * Created by TylerLiu on 2017/03/04.
  */
 public class AutonChooser {
 
-    public static SendableChooser<Runnable> chooser;
+    public static SendableChooser<AutonGroup> chooser;
 
     public static void init() {
         
@@ -16,13 +19,15 @@ public class AutonChooser {
         
         chooser = new SendableChooser<>();
 
-        chooser.addOption("Manual", () -> {Core.robot.teleopPeriodic();});
-     
+        chooser.setDefaultOption("Default Auton", new AutonGroup(new AutonRSMove(Chassis.sensorIR, 90),
+                                                       new AutonPixyAlign(0)
+                                                       //new AutonBall()
+                                                       ));
         
         SmartDashboard.putData(chooser);
     }
 
-    public static Runnable getSelected() {
+    public static AutonGroup getSelected() {
         return chooser.getSelected();
     }
 }

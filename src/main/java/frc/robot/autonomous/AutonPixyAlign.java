@@ -1,5 +1,7 @@
 package frc.robot.autonomous;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.hardware.*;
 import frc.robot.software.SmartPID;
@@ -35,16 +37,13 @@ public class AutonPixyAlign extends AutonBase {
         robot.postData();
     }
 
-
-    /*
-    @Override
-    public boolean isGamepadGood() {
-        return !interruptGamepad.isGamepadChanged();
-    }
-    */
-
     @Override
     public boolean isActionDone() {
         return pid.isActionDone();
+    }
+
+    @Override
+    public String toString() {
+        return "AutonPixyAlign " + target;
     }
 }

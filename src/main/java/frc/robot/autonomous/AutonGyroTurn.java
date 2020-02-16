@@ -33,13 +33,13 @@ public class AutonGyroTurn extends AutonBase {
     }
 
     @Override
-    public void postRun() {
-        Chassis.stop();
-    }
-
-    @Override
     public boolean isActionDone() {
         return pid.atSetpoint();
         //return pid.isActionDone();
+    }
+
+    @Override
+    public String toString() {
+        return "AutonGyroTurn " + targetAngle;
     }
 }

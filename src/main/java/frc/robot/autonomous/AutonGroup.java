@@ -18,7 +18,7 @@ public class AutonGroup {
         int counter = 0;
         for(AutonBase i : actions) {
             counter ++;
-            Utils.report("Running Action " + counter);
+            Utils.report("Running Action " + counter + ": " + i.toString());
             if(!i.run()) {
                 return false;
             }
