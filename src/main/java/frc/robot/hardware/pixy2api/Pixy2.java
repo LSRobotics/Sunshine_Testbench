@@ -3,6 +3,8 @@ package frc.robot.hardware.pixy2api;
 import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
+import frc.robot.software.Utils;
+
 /**
  * Java Port of Pixy2 Arduino Library
  * 
@@ -111,6 +113,18 @@ public class Pixy2 {
 		this.ccc = new Pixy2CCC(this);
 		this.line = new Pixy2Line(this);
 		this.video = new Pixy2Video(this);
+		switch(init()) {
+			case PIXY_RESULT_OK:
+				Utils.report("Pixy 2 SPI initiated.");
+				break;
+			case PIXY_RESULT_ERROR:
+				Utils.report("Pixy 2 SPI failed to initiate: Unkown error.");
+				break;
+			case PIXY_RESULT_TIMEOUT:
+				Utils.report("Pixy 2 SPI failed to initiate: timeout.");
+				break;
+			default: break;
+		};
 	}
 
 	/**
@@ -120,7 +134,7 @@ public class Pixy2 {
 	 * 
 	 * @return Pixy2 error code
 	 */
-	public int init(int argument) {
+	private int init(int argument) {
 		// Opens link
 		int ret = link.open(argument);
 		if (ret >= 0) {
@@ -147,7 +161,7 @@ public class Pixy2 {
 	 * 
 	 * @return Pixy2 error code
 	 */
-	public int init() {
+	private int init() {
 		return init(PIXY_DEFAULT_ARGVAL);
 	}
 

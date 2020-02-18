@@ -81,7 +81,7 @@ public class Pixy2CCC {
 	 * 
 	 * @return Pixy2 error code
 	 */
-	public int getBlocks(boolean wait, int sigmap, int maxBlocks) {
+	public int fetchData(boolean wait, int sigmap, int maxBlocks) {
 		long start = System.currentTimeMillis();
 
 		while (true) {
@@ -137,7 +137,7 @@ public class Pixy2CCC {
 	/**
 	 * <p>Gets ArrayList of signature blocks from cache</p>
 	 * 
-	 * <p>{@link #getBlocks(boolean, int, int)} must be executed first to get the data actual from Pixy2</p>
+	 * <p>{@link #fetchData(boolean, int, int)} must be executed first to get the data actual from Pixy2</p>
 	 * 
 	 * @return Pixy2 signature Blocks
 	 */
@@ -145,7 +145,7 @@ public class Pixy2CCC {
 		return blocks;
 	}
 
-	public class Block {
+	public static class Block {
 
 		private int signature, x, y, width, height, angle, index, age = 0;
 
