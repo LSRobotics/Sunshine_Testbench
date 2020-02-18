@@ -2,8 +2,6 @@ package frc.robot.autonomous;
 
 import frc.robot.software.*;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-
 import frc.robot.hardware.*;
 
 public class AutonSleep extends AutonBase {

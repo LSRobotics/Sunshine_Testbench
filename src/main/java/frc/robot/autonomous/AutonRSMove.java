@@ -1,6 +1,5 @@
 package frc.robot.autonomous;
 
-import frc.robot.software.*;
 import frc.robot.hardware.*;
 import frc.robot.hardware.Gamepad.Key;
 

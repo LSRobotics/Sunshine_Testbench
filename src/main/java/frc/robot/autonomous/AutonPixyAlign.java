@@ -1,7 +1,5 @@
 package frc.robot.autonomous;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.hardware.*;
 import frc.robot.software.SmartPID;
