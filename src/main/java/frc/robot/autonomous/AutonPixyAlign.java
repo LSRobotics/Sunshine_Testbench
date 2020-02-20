@@ -21,9 +21,10 @@ public class AutonPixyAlign extends AutonBase {
     
     @Override
     public void preRun() {
-        pid = new SmartPID(1.75, 0, 0.6);
+        pid = new SmartPID(1.75, 0, 0.2);
         //working values (1.75, 0, 0.6)
         pid.setSetpoint(target);
+        pid.setCutOff(0.15);
     }
 
     @Override
@@ -37,6 +38,7 @@ public class AutonPixyAlign extends AutonBase {
 
     @Override
     public boolean isActionDone() {
+        //return false;
         return pid.isActionDone();
     }
 

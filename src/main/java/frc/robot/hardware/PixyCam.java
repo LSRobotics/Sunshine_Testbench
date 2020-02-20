@@ -9,6 +9,7 @@ import frc.robot.software.*;
 public class PixyCam {
 
     //PIXY 2 Resolution: 1296x976
+    //XY Res: 315x205
 
     public static AnalogInput pixy;
     public static AnalogOutput led;
@@ -29,7 +30,7 @@ public class PixyCam {
 
 
     public static double getTargetLocation() {
-        return (double)(getHighPort().getX()) / 1295 * 2 - 1;
+        return (double)(getHighPort().getX()) / 315 * 2 - 1;
         //return (pixy.getAverageVoltage()/3.3 * 2) - 1;
     }
 
@@ -40,14 +41,18 @@ public class PixyCam {
 
         ccc.fetchData(false, Pixy2CCC.CCC_SIG1, 10);
 
-        for(Block block : ccc.getBlocks()) {
+        var blocks = ccc.getBlocks();
+
+        if(blocks.size() == 0) return biggest;
+
+        for(Block block : blocks) {
             counter ++;
 
             if(counter == 1) {
                 biggest = block;
             }
             else {
-                if((block.getWidth() * block.getHeight()) > (biggest.getWidth() * biggest.getHeight())) {
+                if(block.getWidth() > biggest.getWidth()) {
                     biggest = block;
                 }
             }

@@ -8,6 +8,7 @@ public class SmartPID extends PIDController {
 
     ArrayList<Double> history = new ArrayList<Double>();
     Timer timer = new Timer("SmartPID Timer");
+    double oscilateCutOff = 0.1;
     boolean isActionDone = false;
 
     public SmartPID(double Kp, double Ki, double Kd) {
@@ -36,7 +37,7 @@ public class SmartPID extends PIDController {
                 }
             }
 
-            if(max < 0.1) {
+            if(max < oscilateCutOff) {
                 Utils.report("Detected, Current Value:" + result);
                 isActionDone = true;
             }
@@ -44,6 +45,10 @@ public class SmartPID extends PIDController {
 
         return result;
 
+    }
+
+    public void setCutOff(double oscilateCutOff) {
+        this.oscilateCutOff = Math.abs(oscilateCutOff);
     }
 
     public boolean isActionDone() {

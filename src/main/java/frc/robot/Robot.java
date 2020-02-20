@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
 
     Core.initialize(this);
 
-    //Camera.initialize();
+    Camera.initialize();
 
   }
 
