@@ -1,20 +1,25 @@
 package frc.robot.hardware;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogOutput;
+
 import frc.robot.hardware.pixy2api.*;
 import frc.robot.hardware.pixy2api.Pixy2CCC.Block;
 import frc.robot.software.*;
+
 
 public class PixyCam {
 
     //PIXY 2 Resolution: 1296x976
     //XY Res: 315x205
 
-    public static AnalogInput pixy;
+    private static AnalogInput pixy;
     public static AnalogOutput led;
     public static boolean isLedOn = false;
-    public static Pixy2CCC ccc;
+    private static Pixy2CCC ccc;
+    private static ArrayList<Block> blockBuffer;
 
     public static void initialize() {
 
@@ -36,16 +41,15 @@ public class PixyCam {
 
     private static Block getHighPort() {
         
+        Integer goodBlocks = 0;
         int counter = 0;
         Block biggest = new Block(0, 0, 0, 0, 0, 0, 0, 0);
 
-        ccc.fetchData(false, Pixy2CCC.CCC_SIG1, 10);
+        ccc.fetchData(false, Pixy2CCC.CCC_SIG1,10,blockBuffer,goodBlocks);
 
-        var blocks = ccc.getBlocks();
+        if(goodBlocks == 0) return biggest;
 
-        if(blocks.size() == 0) return biggest;
-
-        for(Block block : blocks) {
+        for(Block block : blockBuffer) {
             counter ++;
 
             if(counter == 1) {

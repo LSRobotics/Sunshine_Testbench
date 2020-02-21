@@ -40,6 +40,7 @@ public class Pixy2CCC {
 
 	public final static byte CCC_RESPONSE_BLOCKS = 0x21;
 	public final static byte CCC_REQUEST_BLOCKS = 0x20;
+	public final static int CCC_BLOCK_BUFFER_SIZE = 25;
 
 	// Defines for sigmap:
 	// You can bitwise "or" these together to make a custom sigmap.
@@ -60,6 +61,7 @@ public class Pixy2CCC {
 	private final Pixy2 pixy;
 
 	private ArrayList<Block> blocks = new ArrayList<Block>();
+	private int goodBlocks = 0;
 
 	/**
 	 * Constructs Pixy2 Color Connected Components tracker
@@ -68,6 +70,11 @@ public class Pixy2CCC {
 	 */
 	protected Pixy2CCC(Pixy2 pixy) {
 		this.pixy = pixy;
+
+		//Pre-allocate memory, 100 max
+		for(int i = 0; i < CCC_BLOCK_BUFFER_SIZE; ++i) {
+			blocks.add(new Block(0, 0, 0, 0, 0, 0, 0, 0));
+		}
 	}
 
 	/**
@@ -78,11 +85,21 @@ public class Pixy2CCC {
 	 * @param wait      Whether to wait for Pixy2 if data is not available
 	 * @param sigmap    Sigmap to look for
 	 * @param maxBlocks Maximum blocks to look for
+	 * @param blockBuffer buffer for storing block objects
+	 * @param numGoodBlocks buffer for storing number of "good blocks" for users to process
 	 * 
 	 * @return Pixy2 error code
 	 */
-	public int fetchData(boolean wait, int sigmap, int maxBlocks) {
+	public int fetchData(boolean wait, int sigmap, int maxBlocks, ArrayList<Block> blockBuffer, Integer numGoodBlocks) {
 		long start = System.currentTimeMillis();
+
+		//maxBlocks bound check
+		if(maxBlocks > CCC_BLOCK_BUFFER_SIZE) {
+			maxBlocks = CCC_BLOCK_BUFFER_SIZE;
+		}
+		else if(maxBlocks <= 0) {
+			return Pixy2.PIXY_RESULT_ERROR;
+		}
 
 		while (true) {
 			// Fill in request data
@@ -95,20 +112,31 @@ public class Pixy2CCC {
 			pixy.sendPacket();
 			if (pixy.receivePacket() == 0) {
 				if (pixy.type == CCC_RESPONSE_BLOCKS) {
-					// Clears current cache of blocks
-					blocks.clear();
-					// Iterates through and creates block objects from buffer
+					
+					//Resets counter to zero -- O(1) time efficiency! clear() acutally takes a while
+					goodBlocks = 0;
+					
+					// Iterates through and write block objects to buffer
 					for (int i = 0; i + 13 < pixy.length; i += 14) {
-						Block b = new Block(((pixy.buffer[i + 1] & 0xff) << 8) | (pixy.buffer[i] & 0xff),
+
+						blocks.get(goodBlocks).setParams(
+							((pixy.buffer[i + 1] & 0xff) << 8) | (pixy.buffer[i] & 0xff),
 								((pixy.buffer[i + 3] & 0xff) << 8) | (pixy.buffer[i + 2] & 0xff),
 								((pixy.buffer[i + 5] & 0xff) << 8) | (pixy.buffer[i + 4] & 0xff),
 								((pixy.buffer[i + 7] & 0xff) << 8) | (pixy.buffer[i + 6] & 0xff),
 								((pixy.buffer[i + 9] & 0xff) << 8) | (pixy.buffer[i + 8] & 0xff),
 								((pixy.buffer[i + 11] & 0xff) << 8) | (pixy.buffer[i + 10] & 0xff),
-								(pixy.buffer[i + 12] & 0xff), (pixy.buffer[i + 13] & 0xff));
-						blocks.add(b);
+								(pixy.buffer[i + 12] & 0xff), (pixy.buffer[i + 13] & 0xff));;
+
+						goodBlocks += 1;
 					}
-					return blocks.size(); // Success
+
+					//Write reference to block buffer
+					blockBuffer = blocks;
+					numGoodBlocks = ((Integer)goodBlocks);
+
+					return Pixy2.PIXY_RESULT_OK; // Success
+
 				} else if (pixy.type == Pixy2.PIXY_TYPE_RESPONSE_ERROR) {
 					// Deal with busy and program changing states from Pixy2 (we'll wait)
 					if (pixy.buffer[0] == Pixy2.PIXY_RESULT_BUSY) {
@@ -134,17 +162,6 @@ public class Pixy2CCC {
 		}
 	}
 
-	/**
-	 * <p>Gets ArrayList of signature blocks from cache</p>
-	 * 
-	 * <p>{@link #fetchData(boolean, int, int)} must be executed first to get the data actual from Pixy2</p>
-	 * 
-	 * @return Pixy2 signature Blocks
-	 */
-	public ArrayList<Block> getBlocks() {
-		return blocks;
-	}
-
 	public static class Block {
 
 		private int signature, x, y, width, height, angle, index, age = 0;
@@ -162,6 +179,10 @@ public class Pixy2CCC {
 		 * @param age       Block age
 		 */
 		public Block(int signature, int x, int y, int width, int height, int angle, int index, int age) {
+			setParams(signature, x, y, width, height, angle, index, age);
+		}
+
+		public void setParams(int signature, int x, int y, int width, int height, int angle, int index, int age) {
 			this.signature = signature;
 			this.x = x;
 			this.y = y;
