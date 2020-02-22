@@ -3,6 +3,7 @@ package frc.robot.autonomous;
 import frc.robot.hardware.*;
 import frc.robot.hardware.Gamepad.Key;
 
+//drives robot until the sensor reads a set distance
 public class AutonRSMove extends AutonBase{
     
     RangeSensor sensor;
