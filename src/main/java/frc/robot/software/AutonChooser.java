@@ -27,16 +27,16 @@ public class AutonChooser {
                                                    //shooter
                                                    //drive off line
                                                    ));
-        chooser.addOption("Drive to goal from left", new AutonGroup(new AutonGyroTurn(-90),
-                                                   new AutonRSMove(Chassis.sensorIR, 94.66), //subtract to center of bot
-                                                   new AutonGyroTurn(90),
+        chooser.addOption("Drive to goal from left", new AutonGroup(new AutonGyroTurn(90),
+                                                   new AutonRSMove(Chassis.sensorIR, 94.66 - 15), //subtract to center of bot
+                                                   new AutonGyroTurn(0),
                                                    new AutonPixyAlign(0)
                                                    //shooter
                                                    //drive off line
                                                    ));
-        chooser.addOption("Drive to goal from right", new AutonGroup(new AutonGyroTurn(90),
+        chooser.addOption("Drive to goal from right", new AutonGroup(new AutonGyroTurn(-90),
                                                    new AutonRSMove(Chassis.sensorIR, 219.18), //subtract to center of bot
-                                                   new AutonGyroTurn(-90),
+                                                   new AutonGyroTurn(0),
                                                    new AutonPixyAlign(0)
                                                    //shooter
                                                    //drive off line

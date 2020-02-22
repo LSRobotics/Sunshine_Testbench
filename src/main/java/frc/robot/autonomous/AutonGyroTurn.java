@@ -21,15 +21,15 @@ public class AutonGyroTurn extends AutonBase {
     
     @Override
     public void preRun() {
-        //pid = new SmartPID(1.75, 0, 0.6);
-        pid =  new SmartPID(.045, .85, .01);
+        //pid = new SmartPID(1.5, 0, 0);
+        pid =  new SmartPID(.045, .85, .05);
         pid.setSetpoint(targetAngle);
     }
 
     @Override
     public void duringRun() {
         //Chassis.driveRaw(0,pid.next(NavX.navx.getYaw()));
-        Chassis.driveRaw(0,pid.next(NavX.navx.getYaw())* 0.2);
+        Chassis.driveRaw(0,pid.next(NavX.navx.getYaw()) * .2);
     }
 
     @Override

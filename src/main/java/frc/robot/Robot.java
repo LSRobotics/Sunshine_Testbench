@@ -22,6 +22,7 @@ import frc.robot.hardware.Gamepad.Key;
 import frc.robot.hardware.Solenoid.Status;
 import frc.robot.software.*;
 import frc.robot.hardware.RangeSensor.Type;
+import frc.robot.software.AutonChooser;
 
 public class Robot extends TimedRobot {
 
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
   public Gamepad gp1, gp2;
 
   public static double driveSpeed = 1.0;
+  public static boolean isLinearAutonOK = false;
 
   // Drive mode GUI variables and setup
   public static final String kDefaultDrive = "Default (Right Stick)";
@@ -37,7 +39,7 @@ public class Robot extends TimedRobot {
   public static final String kCustomDrive1 = "Left Stick Drive";
   public static final String kCustomDrive2 = "Both Stick Drive";
   
-  public String m_driveSelected;
+  public String m_driveSelected, AutonSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   public static boolean isBlueLine, isRedLine, isWhiteLine, isYellowCP, isRedCP, isGreenCP, isBlueCP; //CP = control panel
 
@@ -75,12 +77,16 @@ public class Robot extends TimedRobot {
 
     Camera.initialize();
 
+    AutonChooser.init();
+
   }
 
   @Override
   public void disabledPeriodic() {
     updateColorSensor();
     postData();
+    isLinearAutonOK = false;
+    Core.isDisabled = true;
   }
 
   @Override
@@ -90,18 +96,22 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_driveSelected = m_chooser.getSelected();
+    Core.isDisabled = false;
   }
 
   @Override
   public void teleopInit() {
     m_driveSelected = m_chooser.getSelected();
+    Core.isDisabled = false;
   }
 
   @Override
   public void autonomousPeriodic() {
-    // TODO: ACTUALLY DO SOME KIND OF AUTON
-    teleopPeriodic();
+    NavX.navx.zeroYaw();
+    if(!isLinearAutonOK) {
+      isLinearAutonOK = true;
+      AutonChooser.getSelected().run();
+    }
   }
 
   @Override 

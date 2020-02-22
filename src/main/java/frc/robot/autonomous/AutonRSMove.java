@@ -49,7 +49,7 @@ public class AutonRSMove extends AutonBase{
     @Override
     public boolean isActionDone() {
         
-        return Math.abs(diff) < 3;
+        return Math.abs(diff) < 1;
         //return pid.atSetpoint();
         //return pid.isActionDone();
     }

@@ -20,6 +20,7 @@ public class AutonGroup {
             counter ++;
             Utils.report("Running Action " + counter + ": " + i.toString());
             if(!i.run()) {
+                //Utils.report("Interrupted.");
                 return false;
             }
         }

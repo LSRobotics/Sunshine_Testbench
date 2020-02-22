@@ -41,7 +41,7 @@ public class AutonBase {
             duringRun();
             robot.postData();
 
-            if(!isGamepadGood()) {
+            if(!isGamepadGood() || Core.isDisabled) {
                 postRun();
                 return false;
             } 
