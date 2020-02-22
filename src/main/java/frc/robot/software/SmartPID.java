@@ -37,7 +37,7 @@ public class SmartPID extends PIDController {
                 }
             }
 
-            if(max < oscilateCutOff) {
+            if(max < 0.1) {
                 Utils.report("Detected, Current Value:" + result);
                 isActionDone = true;
             }

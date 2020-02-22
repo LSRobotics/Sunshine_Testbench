@@ -24,21 +24,22 @@ public class PixyCam {
     public static void initialize() {
 
         
-        //pixy = new AnalogInput(Statics.PIXY_CAM);
+        pixy = new AnalogInput(Statics.PIXY_CAM);
         led  = new AnalogOutput(0);
         switchLED(true);
 
-        ccc = new Pixy2().getCCC();
+        //ccc = new Pixy2().getCCC();
 
     }
 
 
 
     public static double getTargetLocation() {
-        return (double)(getHighPort().getX()) / 315 * 2 - 1;
-        //return (pixy.getAverageVoltage()/3.3 * 2) - 1;
+        //return (double)(getHighPort().getX()) / 315 * 2 - 1;
+        return (pixy.getAverageVoltage()/3.3 * 2) - 1;
     }
 
+    /*
     private static Block getHighPort() {
         
         Integer goodBlocks = 0;
@@ -64,6 +65,7 @@ public class PixyCam {
 
         return biggest;
     }
+    */
 
     public static void switchLED(boolean on) {
         isLedOn = on;
