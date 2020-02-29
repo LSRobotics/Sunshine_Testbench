@@ -9,6 +9,7 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.DriverStation;
 //WPILib
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,7 +50,6 @@ public class Robot extends TimedRobot {
   public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
-  //public Lights lights;
   public double lightMode;
 
   @Override
@@ -272,12 +272,17 @@ public class Robot extends TimedRobot {
 
   public void updateLights() {
     if (Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_Y),0.2,1) != 0) {
-      lightMode = .57;
-      Lights.lightChange(lightMode);
+      lightMode = -.07;
     }
     else {
-      Lights.lightChange(.37);
+      if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
+      lightMode = .85;
     }
+      else {
+        lightMode = .61;
+      }
+    }
+    Lights.lightChange(lightMode);
   }
 
   public void postData() {
