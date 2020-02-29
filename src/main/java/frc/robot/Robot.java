@@ -49,6 +49,9 @@ public class Robot extends TimedRobot {
   public PIDController ultrasonicPID;
   public double lastTargetAngle = 0;
 
+  //public Lights lights;
+  public double lightMode;
+
   @Override
   public void robotInit() {
 
@@ -78,6 +81,8 @@ public class Robot extends TimedRobot {
     Camera.initialize();
 
     AutonChooser.init();
+
+    Lights.initialize();
 
   }
 
@@ -136,6 +141,8 @@ public class Robot extends TimedRobot {
     updateTop();
 
     postData();
+
+    updateLights();
 
   }
 
@@ -259,10 +266,18 @@ public class Robot extends TimedRobot {
 
   }
 
-
-
   public void updateTop() {
     updateColorSensor();
+  }
+
+  public void updateLights() {
+    if (Utils.mapAnalog(gp1.getValue(Key.J_RIGHT_Y),0.2,1) != 0) {
+      lightMode = .57;
+      Lights.lightChange(lightMode);
+    }
+    else {
+      Lights.lightChange(.37);
+    }
   }
 
   public void postData() {
@@ -288,5 +303,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Red", isRedCP);
     SmartDashboard.putBoolean("Green", isGreenCP);
     SmartDashboard.putBoolean("Blue", isBlueCP);
+    SmartDashboard.putNumber("LED", lightMode);
   }
 }

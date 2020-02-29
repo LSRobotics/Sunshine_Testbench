@@ -61,4 +61,6 @@ public class Statics {
                                 new AutonRSMove(Chassis.sensorIR, 153.875),
                                 new AutonPixyAlign(0));
 
+    public final static int Light_PWM_Port = 0;
+
 }
